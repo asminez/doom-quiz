@@ -1,0 +1,24 @@
+{
+  "source": "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/MainTabView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Focus",
+        "location": {
+          "startingColumn": 17,
+          "startingLine": 10
+        }
+      },
+      {
+        "comment": "",
+        "key": "Study",
+        "location": {
+          "startingColumn": 17,
+          "startingLine": 15
+        }
+      }
+    ]
+  },
+  "version": 1
+}

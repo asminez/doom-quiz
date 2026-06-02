@@ -1,0 +1,23 @@
+{
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/FocusView.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/GateQuizView.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/MainTabView.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.swiftdeps"
+  }
+}

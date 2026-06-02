@@ -1,0 +1,23 @@
+{
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/Components/AppTileView.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/Components/CompactTimeBadge.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/CompactTimeBadge.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/CompactTimeBadge.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/CompactTimeBadge.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/CompactTimeBadge.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/CompactTimeBadge.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/Components/LearningNowCard.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/LearningNowCard.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/LearningNowCard.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/LearningNowCard.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/LearningNowCard.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/LearningNowCard.swiftdeps"
+  }
+}

@@ -1,0 +1,120 @@
+{
+  "source": "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/FocusView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Add a study deck first",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 73
+        }
+      },
+      {
+        "comment": "",
+        "key": "doomquiz",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 15
+        }
+      },
+      {
+        "comment": "",
+        "key": "Earn scroll time with your syllabus",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 18
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld min used today · budget %lld min",
+        "location": {
+          "startingColumn": 13,
+          "startingLine": 31
+        }
+      },
+      {
+        "comment": "",
+        "key": "Blocked apps",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 47
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap to open · long-press to toggle. Real shields use Screen Time apps you pick above.",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 51
+        }
+      },
+      {
+        "comment": "",
+        "key": "OK",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 74
+        }
+      },
+      {
+        "comment": "",
+        "key": "Upload syllabus or enter a topic on the Study tab.",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Time's up",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 89
+        }
+      },
+      {
+        "comment": "",
+        "key": "Opening a blocked app triggers a 5-question quiz. Score 3+ to unlock more minutes.",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 92
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lldm",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 113
+        }
+      },
+      {
+        "comment": "",
+        "key": "Screen Time shields",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 141
+        }
+      },
+      {
+        "comment": "",
+        "key": "Authorize Screen Time",
+        "location": {
+          "startingColumn": 17,
+          "startingLine": 149
+        }
+      },
+      {
+        "comment": "",
+        "key": "Choose apps to shield",
+        "location": {
+          "startingColumn": 17,
+          "startingLine": 156
+        }
+      }
+    ]
+  },
+  "version": 1
+}

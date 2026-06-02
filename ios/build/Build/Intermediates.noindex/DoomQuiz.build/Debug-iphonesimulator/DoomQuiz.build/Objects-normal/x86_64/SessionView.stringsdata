@@ -1,0 +1,40 @@
+{
+  "source": "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/SessionView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Session",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld min remaining",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 25
+        }
+      },
+      {
+        "comment": "",
+        "key": "When time hits zero, shields apply and the gate quiz appears.",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "Leave app",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 35
+        }
+      }
+    ]
+  },
+  "version": 1
+}

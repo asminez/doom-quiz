@@ -1,0 +1,80 @@
+{
+  "source": "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/StudyView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Study deck",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 20
+        }
+      },
+      {
+        "comment": "",
+        "key": "Quizlet-style memorize points from your syllabus or an AI topic.",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 23
+        }
+      },
+      {
+        "comment": "",
+        "key": "No deck yet — generate one to unlock gate quizzes.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 94
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld points · %lld gate questions",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 86
+        }
+      },
+      {
+        "comment": "",
+        "key": "Mode",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 27
+        }
+      },
+      {
+        "comment": "",
+        "key": "Import PDF (paste excerpt after)",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 51
+        }
+      },
+      {
+        "comment": "",
+        "key": "e.g. Cell biology — mitosis & meiosis",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 36
+        }
+      },
+      {
+        "comment": "",
+        "key": "Paste syllabus, notes, or PDF excerpts…",
+        "location": {
+          "startingColumn": 25,
+          "startingLine": 39
+        }
+      },
+      {
+        "comment": "",
+        "key": "Generate memorize list",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 64
+        }
+      }
+    ]
+  },
+  "version": 1
+}

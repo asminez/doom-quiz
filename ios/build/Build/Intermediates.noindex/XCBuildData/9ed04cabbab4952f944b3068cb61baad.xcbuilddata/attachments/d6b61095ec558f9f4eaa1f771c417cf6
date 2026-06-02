@@ -1,0 +1,179 @@
+{
+  "" : {
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuiz-primary.dia",
+    "emit-module-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuiz-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuiz-primary-emit-module.dia",
+    "pch" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuiz-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuiz-primary.swiftdeps"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/App/AppState.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppState~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/DoomQuizApp.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/DoomQuizApp~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Models/Models.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/Models~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Models/RewardCalculator.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/RewardCalculator~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Services/AIService.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AIService~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Services/PersistenceStore.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PersistenceStore~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Services/ScreenTimeManager.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Theme/AppTheme.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/Components/AppTileView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTileView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/Components/MemorizeCardView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/Components/TimeRingView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/FocusView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/FocusView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/GateQuizView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GateQuizView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/MainTabView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MainTabView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/SessionView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/SessionView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/StudyView.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/StudyView~partial.swiftmodule"
+  },
+  "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "const-values" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols.d",
+    "diagnostics" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols.dia",
+    "index-unit-output-path" : "/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols.o",
+    "swift-dependencies" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols.swiftdeps",
+    "swiftmodule" : "/Users/arijal3/Projects/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/GeneratedAssetSymbols~partial.swiftmodule"
+  }
+}

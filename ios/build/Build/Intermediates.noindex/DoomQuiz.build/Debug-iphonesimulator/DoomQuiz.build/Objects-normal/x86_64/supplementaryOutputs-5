@@ -1,0 +1,23 @@
+{
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/Components/MemorizeCardView.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/MemorizeCardView.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/Components/QuizPreviewRow.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/QuizPreviewRow.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/QuizPreviewRow.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/QuizPreviewRow.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/QuizPreviewRow.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/QuizPreviewRow.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Views/Components/TimeRingView.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/TimeRingView.swiftdeps"
+  }
+}

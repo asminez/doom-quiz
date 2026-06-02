@@ -1,0 +1,23 @@
+{
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Services/PremiumStore.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PremiumStore.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PremiumStore.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PremiumStore.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PremiumStore.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/PremiumStore.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Services/ScreenTimeManager.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/ScreenTimeManager.swiftdeps"
+  },
+  "/Users/arijal3/Desktop/doomquiz/ios/DoomQuiz/Theme/AppTheme.swift" : {
+    "const-values" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.swiftconstvalues",
+    "dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.d",
+    "diagnostics" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.dia",
+    "object" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.o",
+    "swift-dependencies" : "/Users/arijal3/Desktop/doomquiz/ios/build/Build/Intermediates.noindex/DoomQuiz.build/Debug-iphonesimulator/DoomQuiz.build/Objects-normal/x86_64/AppTheme.swiftdeps"
+  }
+}

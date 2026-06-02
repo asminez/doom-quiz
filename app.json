@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "DoomQuiz",
+    "slug": "doomquiz",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "doomquiz",
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.doomquiz.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0A0B"
+      },
+      "package": "com.doomquiz.app"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-asset",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "extra": {
+      "apiUrl": "http://localhost:8788",
+      "router": {}
+    }
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "source": "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/Components/MemorizeCardView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 13
+        }
+      },
+      {
+        "comment": "",
+        "key": "Tap to flip",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 24
+        }
+      },
+      {
+        "comment": "",
+        "key": "Definition",
+        "location": {
+          "startingColumn": 24,
+          "startingLine": 16
+        }
+      },
+      {
+        "comment": "",
+        "key": "Term",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 16
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,88 @@
+{
+  "source": "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/GateQuizView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "No quiz loaded",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 38
+        }
+      },
+      {
+        "comment": "",
+        "key": "Close",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 40
+        }
+      },
+      {
+        "comment": "",
+        "key": "5/5 → +10 min · 4/5 → +5 · 3/5 → +2 · below 3 → none",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 84
+        }
+      },
+      {
+        "comment": "",
+        "key": "Next",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "See results",
+        "location": {
+          "startingColumn": 55,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Gate quiz · %@",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 50
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld / %lld",
+        "location": {
+          "startingColumn": 14,
+          "startingLine": 54
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld/%lld",
+        "location": {
+          "startingColumn": 12,
+          "startingLine": 125
+        }
+      },
+      {
+        "comment": "",
+        "key": "Open %@",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 135
+        }
+      },
+      {
+        "comment": "",
+        "key": "Back to focus",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 142
+        }
+      }
+    ]
+  },
+  "version": 1
+}

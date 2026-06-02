@@ -1,0 +1,24 @@
+{
+  "source": "/Users/arijal3/Projects/doomquiz/ios/DoomQuiz/Views/Components/AppTileView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "QUIZ",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 29
+        }
+      },
+      {
+        "comment": "",
+        "key": "OFF",
+        "location": {
+          "startingColumn": 16,
+          "startingLine": 34
+        }
+      }
+    ]
+  },
+  "version": 1
+}

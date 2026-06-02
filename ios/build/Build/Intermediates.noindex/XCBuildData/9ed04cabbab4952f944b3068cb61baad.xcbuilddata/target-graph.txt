@@ -1,0 +1,2 @@
+Target dependency graph (1 target)
+Target 'DoomQuiz' in project 'DoomQuiz' (no dependencies)
