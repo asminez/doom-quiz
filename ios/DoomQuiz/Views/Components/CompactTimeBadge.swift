@@ -1,17 +1,14 @@
 import SwiftUI
 
 struct CompactTimeBadge: View {
-  let remaining: Int
-  let locked: Bool
+  let minutesReadToday: Int
 
   var body: some View {
     HStack(spacing: 6) {
-      Circle()
-        .fill(locked ? UnrotTheme.danger : QuizletTheme.correct)
-        .frame(width: 8, height: 8)
-      Text(locked ? "Locked · 0m" : "\(remaining)m left")
+      Circle().fill(QuizletTheme.correct).frame(width: 8, height: 8)
+      Text("\(minutesReadToday)m read today")
         .font(.subheadline.weight(.bold))
-        .foregroundStyle(locked ? UnrotTheme.danger : QuizletTheme.text)
+        .foregroundStyle(QuizletTheme.text)
     }
     .padding(.horizontal, 12)
     .padding(.vertical, 8)

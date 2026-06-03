@@ -19,16 +19,16 @@ struct FocusView: View {
             .padding(.top, 2)
 
           metricsSection
-            .padding(.top, 16)
+            .padding(.top, 20)
 
           activitySummary
             .padding(.top, 18)
 
-          blockedAppsSection
+          earnMoreTimeSection
             .padding(.top, 30)
 
-          learningNowSection
-            .padding(.top, 20)
+          blockedAppsSection
+            .padding(.top, 30)
 
           Button { selectedTab = AppTab.settings.rawValue } label: {
             Label("Change daily limit in Settings", systemImage: "gearshape")
@@ -118,6 +118,28 @@ struct FocusView: View {
     .foregroundStyle(UnrotTheme.text)
   }
 
+  private var earnMoreTimeSection: some View {
+    VStack(alignment: .leading, spacing: 14) {
+      Text("Earn more time")
+        .font(.system(size: 18, weight: .heavy, design: .rounded))
+        .foregroundStyle(UnrotTheme.text)
+
+      learningNowCards
+    }
+  }
+
+  private var learningNowCards: some View {
+    VStack(spacing: 12) {
+      ForEach(learningNowDecks) { deck in
+        focusLearningCard(deck: deck)
+      }
+
+      if learningNowDecks.isEmpty {
+        focusLearningCard(deck: nil)
+      }
+    }
+  }
+
   private var blockedAppsSection: some View {
     VStack(alignment: .leading, spacing: 14) {
       HStack {
@@ -174,18 +196,6 @@ struct FocusView: View {
     }
   }
 
-  private var learningNowSection: some View {
-    VStack(spacing: 12) {
-      ForEach(learningNowDecks) { deck in
-        focusLearningCard(deck: deck)
-      }
-
-      if learningNowDecks.isEmpty {
-        focusLearningCard(deck: nil)
-      }
-    }
-  }
-
   private func focusLearningCard(deck: StudyDeck?) -> some View {
     Button {
       if let deck {
@@ -204,14 +214,14 @@ struct FocusView: View {
         }
 
         VStack(alignment: .leading, spacing: 5) {
-          Text("START LEARNING")
+          Text(deck == nil ? "START LEARNING" : "CONTINUE STUDYING")
             .font(.system(size: 13, weight: .bold))
             .foregroundStyle(UnrotTheme.textMuted)
           Text(deck?.title ?? "Pick a topic")
             .font(.system(size: 18, weight: .bold))
             .foregroundStyle(UnrotTheme.text)
             .lineLimit(1)
-          Text(deck == nil ? "Tap to start studying" : "0/8 sections mastered")
+          Text(deck == nil ? "Tap to start studying" : "\(deck?.masteredParagraphIds.count ?? 0)/\(LessonContentAmount.sectionCount) sections mastered")
             .font(.system(size: 14))
             .foregroundStyle(UnrotTheme.textMuted)
         }

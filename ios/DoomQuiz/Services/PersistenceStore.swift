@@ -21,7 +21,10 @@ enum PersistenceStore {
       dailyBudgetMinutes: 45,
       remainingMinutes: 45,
       usedTodayMinutes: 0,
+      quizEarnedTodayMinutes: 0,
       studyReadingSecondsToday: 0,
+      gateRewardClaimedMinutes: 0,
+      gateRewardClaimedSectionIds: [],
       lastResetDate: todayKey(),
       decks: [],
       activeDeckId: nil
@@ -53,7 +56,10 @@ enum PersistenceStore {
       next.lastResetDate = today
       next.remainingMinutes = next.dailyBudgetMinutes
       next.usedTodayMinutes = 0
+      next.quizEarnedTodayMinutes = 0
       next.studyReadingSecondsToday = 0
+      next.gateRewardClaimedMinutes = 0
+      next.gateRewardClaimedSectionIds = []
     }
     return next
   }

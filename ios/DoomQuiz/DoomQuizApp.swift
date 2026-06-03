@@ -11,6 +11,7 @@ struct DoomQuizApp: App {
         .environmentObject(appState)
         .environmentObject(themeStore)
         .preferredColorScheme(themeStore.preferredColorScheme)
+        .prefersHiddenStatusBar()
     }
   }
 }

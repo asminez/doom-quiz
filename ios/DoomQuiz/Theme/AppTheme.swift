@@ -53,6 +53,7 @@ enum UnrotTheme {
 enum QuizletTheme {
   static let bg = UnrotTheme.bg
   static let card = UnrotTheme.card
+  static let inputBg = UnrotTheme.surface
   static let primary = Color(red: 0.13, green: 0.53, blue: 0.98)
   static let primarySoft = Color(red: 0.13, green: 0.53, blue: 0.98, opacity: 0.12)
   static let text = UnrotTheme.text

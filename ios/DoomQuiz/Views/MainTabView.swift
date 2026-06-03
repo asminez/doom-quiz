@@ -20,7 +20,7 @@ struct MainTabView: View {
             .tabItem { Label("Focus", systemImage: "shield.checkered") }
             .tag(AppTab.focus.rawValue)
 
-          StudyView()
+          StudyView(selectedTab: $selectedTab)
             .tabItem { Label("Study", systemImage: "book.fill") }
             .tag(AppTab.study.rawValue)
 
@@ -32,10 +32,14 @@ struct MainTabView: View {
         .fullScreenCover(isPresented: $appState.showGateQuiz) {
           GateQuizView()
         }
-        .onChange(of: appState.isLocked) { _, locked in
-          if locked && appState.activeDeck != nil {
+        .onChange(of: appState.openStudyTabAfterQuiz) { _, open in
+          if open {
             selectedTab = AppTab.study.rawValue
+            appState.openStudyTabAfterQuiz = false
           }
+        }
+        .onChange(of: appState.isLocked) { _, locked in
+          if locked && appState.activeDeck != nil { selectedTab = AppTab.study.rawValue }
         }
       }
     }
