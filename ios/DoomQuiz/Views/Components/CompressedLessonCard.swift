@@ -58,7 +58,7 @@ struct CompressedLessonCard: View {
         RoundedRectangle(cornerRadius: 14, style: .continuous)
           .stroke(QuizletTheme.primary.opacity(0.4), lineWidth: 1.5)
       )
-      .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
+      .themeCardShadow(elevated: true)
     }
     .buttonStyle(.plain)
   }

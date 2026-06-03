@@ -55,7 +55,7 @@ struct LearningNowCard: View {
           .padding(.horizontal, 14)
           .background(
             LinearGradient(
-              colors: [UnrotTheme.accent, Color(red: 0.9, green: 0.3, blue: 0.2)],
+              colors: [UnrotTheme.accent, UnrotTheme.accent.opacity(0.85)],
               startPoint: .leading,
               endPoint: .trailing
             )
@@ -72,7 +72,7 @@ struct LearningNowCard: View {
       RoundedRectangle(cornerRadius: 18, style: .continuous)
         .stroke(deck == nil ? QuizletTheme.primary.opacity(0.5) : (locked ? UnrotTheme.accent : QuizletTheme.primary.opacity(0.35)), lineWidth: 1.5)
     )
-    .shadow(color: .black.opacity(0.25), radius: 8, y: 4)
+    .themeCardShadow(elevated: true)
   }
 
   private var subtitle: String {

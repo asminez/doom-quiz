@@ -90,6 +90,7 @@ struct StudyLessonProgressView: View {
         RoundedRectangle(cornerRadius: 16, style: .continuous)
           .stroke(QuizletTheme.primary.opacity(0.45), lineWidth: 2)
       )
+      .themeCardShadow(elevated: true)
   }
 
   private func sectionQuizButton(for paragraph: StudyParagraph) -> some View {
@@ -118,6 +119,7 @@ struct StudyLessonProgressView: View {
     .frame(maxWidth: .infinity, alignment: .leading)
     .background(QuizletTheme.primarySoft)
     .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    .themeCardShadow()
   }
 
   private var masteredCompleteCard: some View {

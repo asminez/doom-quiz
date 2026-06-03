@@ -197,11 +197,16 @@ final class AppState: ObservableObject {
     }
   }
 
-  func generateDeck(title: String, content: String, source: String, wordsPerSection: Int = LessonContentAmount.default.wordsPerSection) async {
+  /// Call before `generateDeck` so Study can show the loading screen on the next frame.
+  func prepareLessonUI() {
     isGeneratingQuizzes = false
     isGenerating = true
     isLoadingLessonSections = true
     lastError = nil
+  }
+
+  func generateDeck(title: String, content: String, source: String, wordsPerSection: Int = LessonContentAmount.default.wordsPerSection) async {
+    prepareLessonUI()
     let deckId = "deck-\(Int(Date().timeIntervalSince1970))"
     let storedExcerpt = source == "syllabus" ? PDFTextExtractor.clipForModel(content) : nil
     upsertDeck(

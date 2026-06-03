@@ -19,6 +19,7 @@ struct StudyView: View {
   @State private var showQuizNotReadyHint = false
   @State private var loadingPhaseIndex = 0
   @State private var loadingProgress: Double = 0
+  @State private var pendingLessonTitle: String?
   @AppStorage("doomquiz.studySectionLength") private var lessonContentAmountRaw = LessonContentAmount.default.rawValue
 
   private let quickTopics = [
@@ -67,11 +68,18 @@ struct StudyView: View {
           if let deck = appState.activeDeck {
             if showCreateSections {
               switchLessonPickerMode(deck)
+            } else if isLoadingNewLesson(deck) {
+              lessonLoadingScreen(deck: deck)
             } else {
               activeDeckHeader(deck)
               activeDeckBody(deck)
+              if !studyingDecks.isEmpty {
+                studyingSection
+              }
               switchLessonLink
             }
+          } else if appState.isGenerating, let pendingLessonTitle {
+            lessonLoadingScreen(title: pendingLessonTitle)
           } else {
             newLessonSection
           }
@@ -153,6 +161,7 @@ struct StudyView: View {
       RoundedRectangle(cornerRadius: 16, style: .continuous)
         .stroke(UnrotTheme.accent.opacity(0.4), lineWidth: 1)
     )
+    .themeCardShadow()
   }
 
   private func activeDeckHeader(_ deck: StudyDeck) -> some View {
@@ -192,8 +201,8 @@ struct StudyView: View {
     }
   }
 
-  /// Topic / syllabus / custom — shown when bar is expanded or no deck yet.
-  private var lessonPickerContent: some View {
+  /// Topic / syllabus / custom — new lesson or switch lesson form (no Studying list).
+  private var switchLessonForm: some View {
     VStack(alignment: .leading, spacing: 20) {
       topicHeroCard
 
@@ -212,16 +221,22 @@ struct StudyView: View {
         )
       }
 
-      if !studyingDecks.isEmpty {
-        studyingSection
-      }
-
       if let err = appState.lastError {
         Text(err)
           .font(.footnote)
           .foregroundStyle(QuizletTheme.wrong)
           .fixedSize(horizontal: false, vertical: true)
       }
+    }
+  }
+
+  /// Full picker when no active lesson yet — Studying above ways to start a lesson.
+  private var lessonPickerContent: some View {
+    VStack(alignment: .leading, spacing: 20) {
+      if !studyingDecks.isEmpty {
+        studyingSection
+      }
+      switchLessonForm
     }
   }
 
@@ -272,6 +287,7 @@ struct StudyView: View {
       RoundedRectangle(cornerRadius: 16, style: .continuous)
         .stroke(QuizletTheme.primary.opacity(0.35), lineWidth: 1.5)
     )
+    .themeCardShadow(elevated: true)
   }
 
   private var aiContentAmountControl: some View {
@@ -323,6 +339,7 @@ struct StudyView: View {
       RoundedRectangle(cornerRadius: 14, style: .continuous)
         .stroke(QuizletTheme.border, lineWidth: 1)
     )
+    .themeCardShadow()
   }
 
   private func lessonOptionRow(
@@ -353,6 +370,7 @@ struct StudyView: View {
       RoundedRectangle(cornerRadius: 14, style: .continuous)
         .stroke(QuizletTheme.border, lineWidth: 1)
     )
+    .themeCardShadow()
   }
 
   private func lessonOptionRowContent(
@@ -457,18 +475,58 @@ struct StudyView: View {
       return
     }
     let title = syllabusPDFName ?? "Syllabus"
+    beginLessonGeneration(displayTitle: title)
     await appState.generateDeck(
       title: title,
       content: body,
       source: "syllabus",
       wordsPerSection: lessonContentAmount.wordsPerSection
     )
+    finishLessonGeneration()
     if appState.activeDeck != nil {
-      showCreateSections = false
       syllabusText = ""
       syllabusPDFName = nil
       syllabusPDFSummary = nil
     }
+  }
+
+  private func beginLessonGeneration(displayTitle: String) {
+    pendingLessonTitle = displayTitle
+    showCreateSections = false
+    appState.prepareLessonUI()
+  }
+
+  private func finishLessonGeneration() {
+    pendingLessonTitle = nil
+    if appState.activeDeck?.paragraphs.isEmpty == true,
+      !appState.isGenerating, !appState.isLoadingLessonSections
+    {
+      loadingProgress = 0
+      loadingPhaseIndex = 0
+    }
+  }
+
+  private func isLoadingNewLesson(_ deck: StudyDeck) -> Bool {
+    deck.paragraphs.isEmpty && (appState.isGenerating || appState.isLoadingLessonSections)
+  }
+
+  private func lessonLoadingScreen(deck: StudyDeck) -> some View {
+    lessonLoadingScreen(title: deck.title)
+  }
+
+  private func lessonLoadingScreen(title: String) -> some View {
+    VStack(alignment: .leading, spacing: 16) {
+      Text(title)
+        .font(.title2.weight(.heavy))
+        .foregroundStyle(QuizletTheme.text)
+        .lineLimit(2)
+
+      lessonLoadingCard
+    }
+  }
+
+  private var lessonLoadingCard: some View {
+    lessonLoadingCardContent
   }
 
   private var syllabusPDFSubtitle: String {
@@ -488,11 +546,15 @@ struct StudyView: View {
 
   private func switchLessonPickerMode(_ deck: StudyDeck) -> some View {
     VStack(alignment: .leading, spacing: 20) {
+      if !studyingDecks.isEmpty {
+        studyingSection
+      }
+
       Text("Switch lesson")
         .font(.title2.weight(.heavy))
         .foregroundStyle(QuizletTheme.text)
 
-      lessonPickerContent
+      switchLessonForm
     }
     .transition(.opacity.combined(with: .move(edge: .top)))
   }
@@ -588,76 +650,7 @@ struct StudyView: View {
           .background(QuizletTheme.card)
           .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         } else {
-          VStack(alignment: .leading, spacing: 10) {
-            Text(currentLoadingPhaseTitle)
-              .font(.subheadline.weight(.semibold))
-              .foregroundStyle(QuizletTheme.text)
-
-            Text("Turning your topic into a lesson you can actually read.")
-              .font(.footnote)
-              .foregroundStyle(QuizletTheme.textMuted)
-
-            GeometryReader { geo in
-              ZStack(alignment: .leading) {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                  .fill(QuizletTheme.card)
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                  .fill(QuizletTheme.primary)
-                  .frame(width: max(0, geo.size.width * loadingProgress))
-              }
-              .frame(height: 8)
-            }
-            .frame(height: 8)
-
-            HStack {
-              Text("\(Int(loadingProgress * 100))%")
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(QuizletTheme.primary)
-              Spacer()
-              Text("Finding · Summarizing · Clarifying · Simplifying")
-                .font(.caption2)
-                .foregroundStyle(QuizletTheme.textMuted)
-            }
-          }
-          .padding(16)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .background(QuizletTheme.card)
-          .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-          .task(id: appState.isGenerating || appState.isLoadingLessonSections) {
-            guard appState.isGenerating || appState.isLoadingLessonSections else {
-              loadingProgress = 0
-              loadingPhaseIndex = 0
-              return
-            }
-
-            let phases = loadingPhases
-            loadingProgress = 0
-            loadingPhaseIndex = 0
-
-            // Walk through all but the last phase at a calmer pace up to ~80%.
-            let lastIndex = phases.count - 1
-            for index in 0..<lastIndex {
-              if !(appState.isGenerating || appState.isLoadingLessonSections) { break }
-              loadingPhaseIndex = index
-              HapticFeedback.selection()
-              try? await Task.sleep(for: .milliseconds(1400))
-              let fraction = Double(index + 1) / Double(phases.count)
-              loadingProgress = min(0.8, fraction)
-            }
-
-            // Sit on the last phase and only jump to 100% when generation is done.
-            if appState.isGenerating || appState.isLoadingLessonSections {
-              loadingPhaseIndex = lastIndex
-              loadingProgress = max(loadingProgress, 0.8)
-
-              while appState.isGenerating || appState.isLoadingLessonSections {
-                try? await Task.sleep(for: .milliseconds(200))
-              }
-
-              HapticFeedback.medium()
-              loadingProgress = 1.0
-            }
-          }
+          lessonLoadingCardContent
         }
       } else {
         Text("Reading material didn't load. Tap below to load your lesson sections.")
@@ -766,20 +759,93 @@ struct StudyView: View {
     }
   }
 
+  private var lessonLoadingCardContent: some View {
+    VStack(alignment: .leading, spacing: 10) {
+      Text(currentLoadingPhaseTitle)
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(QuizletTheme.text)
+
+      Text("Turning your topic into a lesson you can actually read.")
+        .font(.footnote)
+        .foregroundStyle(QuizletTheme.textMuted)
+
+      GeometryReader { geo in
+        ZStack(alignment: .leading) {
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(QuizletTheme.card)
+          RoundedRectangle(cornerRadius: 8, style: .continuous)
+            .fill(QuizletTheme.primary)
+            .frame(width: max(0, geo.size.width * loadingProgress))
+        }
+        .frame(height: 8)
+      }
+      .frame(height: 8)
+
+      HStack {
+        Text("\(Int(loadingProgress * 100))%")
+          .font(.caption.weight(.semibold))
+          .foregroundStyle(QuizletTheme.primary)
+        Spacer()
+        Text("Finding · Summarizing · Clarifying · Simplifying")
+          .font(.caption2)
+          .foregroundStyle(QuizletTheme.textMuted)
+      }
+    }
+    .padding(16)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .background(QuizletTheme.card)
+    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    .themeCardShadow()
+    .task(id: appState.isGenerating || appState.isLoadingLessonSections) {
+      guard appState.isGenerating || appState.isLoadingLessonSections else {
+        loadingProgress = 0
+        loadingPhaseIndex = 0
+        return
+      }
+
+      let phases = loadingPhases
+      loadingProgress = 0
+      loadingPhaseIndex = 0
+
+      let lastIndex = phases.count - 1
+      for index in 0..<lastIndex {
+        if !(appState.isGenerating || appState.isLoadingLessonSections) { break }
+        loadingPhaseIndex = index
+        HapticFeedback.selection()
+        try? await Task.sleep(for: .milliseconds(1400))
+        let fraction = Double(index + 1) / Double(phases.count)
+        loadingProgress = min(0.8, fraction)
+      }
+
+      if appState.isGenerating || appState.isLoadingLessonSections {
+        loadingPhaseIndex = lastIndex
+        loadingProgress = max(loadingProgress, 0.8)
+
+        while appState.isGenerating || appState.isLoadingLessonSections {
+          try? await Task.sleep(for: .milliseconds(200))
+        }
+
+        HapticFeedback.medium()
+        loadingProgress = 1.0
+      }
+    }
+  }
+
   private func generateTopicQuiz() async {
     let trimmed = aiTopic.trimmingCharacters(in: .whitespacesAndNewlines)
     guard trimmed.count >= 3 else {
       appState.lastError = "Enter a topic (e.g. \"French Revolution\")."
       return
     }
+    beginLessonGeneration(displayTitle: trimmed)
     await appState.generateDeck(
       title: trimmed,
       content: "Topic to learn: \(trimmed)",
       source: "topic",
       wordsPerSection: lessonContentAmount.wordsPerSection
     )
+    finishLessonGeneration()
     if appState.activeDeck != nil {
-      showCreateSections = false
       aiTopic = ""
     }
   }
@@ -833,6 +899,7 @@ struct StudyView: View {
               RoundedRectangle(cornerRadius: 12, style: .continuous)
                 .stroke(QuizletTheme.border, lineWidth: 1)
             )
+            .themeCardShadow()
           }
           .buttonStyle(.plain)
           .swipeActions(edge: .leading, allowsFullSwipe: false) {

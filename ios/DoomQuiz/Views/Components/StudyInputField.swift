@@ -61,6 +61,6 @@ struct StudySectionCard<Content: View>: View {
       RoundedRectangle(cornerRadius: 16, style: .continuous)
         .stroke(QuizletTheme.border, lineWidth: 1)
     )
-    .shadow(color: Color.black.opacity(0.04), radius: 8, y: 2)
+    .themeCardShadow()
   }
 }

@@ -38,10 +38,11 @@ struct FocusView: View {
               .padding(.top, 14)
           }
           .buttonStyle(.plain)
-          .padding(.bottom, 22)
+          .padding(.bottom, 8)
         }
         .padding(.horizontal, 20)
         .padding(.top, 8)
+        .padding(.bottom, 28)
       }
       .background(UnrotTheme.bg)
       .navigationBarHidden(true)
@@ -61,7 +62,7 @@ struct FocusView: View {
         value: "\(appState.snapshot.remainingMinutes)m",
         label: "Minutes left",
         icon: "hourglass",
-        ringColor: Color(red: 1.0, green: 0.39, blue: 0.29)
+        ringColor: UnrotTheme.accent
       )
       metricTile(
         value: "\(appState.studyMinutesReadToday)m",
@@ -102,6 +103,7 @@ struct FocusView: View {
       RoundedRectangle(cornerRadius: 20, style: .continuous)
         .stroke(UnrotTheme.cardBorder.opacity(0.5), lineWidth: 1)
     )
+    .themeCardShadow()
   }
 
   private var learningNowDecks: [StudyDeck] {
@@ -186,6 +188,7 @@ struct FocusView: View {
       .padding(.vertical, 22)
       .background(UnrotTheme.card)
       .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+      .themeCardShadow()
       .onTapGesture {
         if appState.screenTime.isAuthorized {
           showPicker = true
@@ -201,45 +204,48 @@ struct FocusView: View {
       if let deck {
         appState.setActiveDeck(deck.id)
       }
-      selectedTab = AppTab.study.rawValue
+      withAnimation(.easeInOut(duration: 0.2)) {
+        selectedTab = AppTab.study.rawValue
+      }
     } label: {
-      HStack(spacing: 14) {
+      HStack(spacing: 12) {
         ZStack {
-          RoundedRectangle(cornerRadius: 15, style: .continuous)
+          RoundedRectangle(cornerRadius: 13, style: .continuous)
             .fill(QuizletTheme.primarySoft)
-            .frame(width: 46, height: 46)
+            .frame(width: 39, height: 39)
           Image(systemName: deck == nil ? "plus" : "book.fill")
-            .font(.system(size: 20, weight: .semibold))
+            .font(.system(size: 17, weight: .semibold))
             .foregroundStyle(QuizletTheme.primary)
         }
 
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 4) {
           Text(deck == nil ? "START LEARNING" : "CONTINUE STUDYING")
-            .font(.system(size: 13, weight: .bold))
+            .font(.system(size: 11, weight: .bold))
             .foregroundStyle(UnrotTheme.textMuted)
           Text(deck?.title ?? "Pick a topic")
-            .font(.system(size: 18, weight: .bold))
+            .font(.system(size: 15, weight: .bold))
             .foregroundStyle(UnrotTheme.text)
             .lineLimit(1)
           Text(deck == nil ? "Tap to start studying" : "\(deck?.masteredParagraphIds.count ?? 0)/\(LessonContentAmount.sectionCount) sections mastered")
-            .font(.system(size: 14))
+            .font(.system(size: 12))
             .foregroundStyle(UnrotTheme.textMuted)
         }
 
-        Spacer(minLength: 8)
+        Spacer(minLength: 7)
 
         Image(systemName: "chevron.right")
-          .font(.system(size: 16, weight: .bold))
+          .font(.system(size: 14, weight: .bold))
           .foregroundStyle(UnrotTheme.textMuted)
       }
-      .padding(.horizontal, 16)
-      .padding(.vertical, 20)
+      .padding(.horizontal, 14)
+      .padding(.vertical, 17)
       .background(UnrotTheme.card)
-      .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+      .clipShape(RoundedRectangle(cornerRadius: 17, style: .continuous))
       .overlay(
-        RoundedRectangle(cornerRadius: 20, style: .continuous)
-          .stroke(QuizletTheme.primary.opacity(0.6), lineWidth: 2)
+        RoundedRectangle(cornerRadius: 17, style: .continuous)
+          .stroke(QuizletTheme.primary.opacity(0.6), lineWidth: 1.5)
       )
+      .themeCardShadow(elevated: true)
     }
     .buttonStyle(.plain)
   }
