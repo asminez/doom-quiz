@@ -178,11 +178,12 @@ struct PersistedSnapshot: Codable {
   var lastResetDate: String
   var decks: [StudyDeck]
   var activeDeckId: String?
+  var interestedTopics: [String]
 
   enum CodingKeys: String, CodingKey {
     case dailyBudgetMinutes, remainingMinutes, usedTodayMinutes
     case quizEarnedTodayMinutes, studyReadingSecondsToday, gateRewardClaimedMinutes, gateRewardClaimedSectionIds
-    case lastResetDate, decks, activeDeckId
+    case lastResetDate, decks, activeDeckId, interestedTopics
   }
 
   init(
@@ -195,7 +196,8 @@ struct PersistedSnapshot: Codable {
     gateRewardClaimedSectionIds: [String] = [],
     lastResetDate: String,
     decks: [StudyDeck],
-    activeDeckId: String?
+    activeDeckId: String?,
+    interestedTopics: [String] = []
   ) {
     self.dailyBudgetMinutes = dailyBudgetMinutes
     self.remainingMinutes = remainingMinutes
@@ -207,6 +209,7 @@ struct PersistedSnapshot: Codable {
     self.lastResetDate = lastResetDate
     self.decks = decks
     self.activeDeckId = activeDeckId
+    self.interestedTopics = interestedTopics
   }
 
   init(from decoder: Decoder) throws {
@@ -221,6 +224,7 @@ struct PersistedSnapshot: Codable {
     lastResetDate = try c.decode(String.self, forKey: .lastResetDate)
     decks = try c.decode([StudyDeck].self, forKey: .decks)
     activeDeckId = try c.decodeIfPresent(String.self, forKey: .activeDeckId)
+    interestedTopics = try c.decodeIfPresent([String].self, forKey: .interestedTopics) ?? []
   }
 }
 

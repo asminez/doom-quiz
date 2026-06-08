@@ -29,6 +29,7 @@
 		C961CD368CE74BCA922A4CCE /* Views/Components/CompactTimeBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C961CD368CE74BCA922A4CCEREF /* Views/Components/CompactTimeBadge.swift */; };
 		B2A1C3D4E5F6478990A1B2C3 /* Views/Components/StatusBarHiddenAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2A1C3D4E5F6478990A1B2C3REF /* Views/Components/StatusBarHiddenAnchor.swift */; };
 		CF842E6ED0444A048AE789AB /* Views/FocusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF842E6ED0444A048AE789ABREF /* Views/FocusView.swift */; };
+		A1B2C3D4E5F6789012345678 /* Views/Components/OnboardingHowItWorksAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F6789012345678REF /* Views/Components/OnboardingHowItWorksAnimations.swift */; };
 		D0E6E0A8C3024A2DAA2A2AA5 /* Views/Components/UnrotSeesawOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0E6E0A8C3024A2DAA2A2AA5REF /* Views/Components/UnrotSeesawOnboarding.swift */; };
 		D1B7CB02DCE64BBCB2311A97 /* Models/RewardCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1B7CB02DCE64BBCB2311A97REF /* Models/RewardCalculator.swift */; };
 		F30BCB0D3B8246C18240FE64 /* Views/Components/StudyLessonProgressView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F30BCB0D3B8246C18240FE64REF /* Views/Components/StudyLessonProgressView.swift */; };
@@ -66,6 +67,7 @@
 		C961CD368CE74BCA922A4CCEREF /* Views/Components/CompactTimeBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/CompactTimeBadge.swift; sourceTree = "<group>"; };
 		B2A1C3D4E5F6478990A1B2C3REF /* Views/Components/StatusBarHiddenAnchor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/StatusBarHiddenAnchor.swift; sourceTree = "<group>"; };
 		CF842E6ED0444A048AE789ABREF /* Views/FocusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/FocusView.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F6789012345678REF /* Views/Components/OnboardingHowItWorksAnimations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/OnboardingHowItWorksAnimations.swift; sourceTree = "<group>"; };
 		D0E6E0A8C3024A2DAA2A2AA5REF /* Views/Components/UnrotSeesawOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/UnrotSeesawOnboarding.swift; sourceTree = "<group>"; };
 		D1B7CB02DCE64BBCB2311A97REF /* Models/RewardCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models/RewardCalculator.swift; sourceTree = "<group>"; };
 		F30BCB0D3B8246C18240FE64REF /* Views/Components/StudyLessonProgressView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Views/Components/StudyLessonProgressView.swift; sourceTree = "<group>"; };
@@ -122,6 +124,7 @@
 				2C763CC0F26B4A868286ABC4REF /* Views/Components/MemorizeCardView.swift */,
 				781B25F7302A4D27A5031663REF /* Views/Components/QuizPreviewRow.swift */,
 				4838CC634319472BB587CB38REF /* Views/Components/TimeRingView.swift */,
+				A1B2C3D4E5F6789012345678REF /* Views/Components/OnboardingHowItWorksAnimations.swift */,
 				D0E6E0A8C3024A2DAA2A2AA5REF /* Views/Components/UnrotSeesawOnboarding.swift */,
 				CF842E6ED0444A048AE789ABREF /* Views/FocusView.swift */,
 				AAD4E11D4FB14257AE382065REF /* Views/GateQuizView.swift */,
@@ -221,6 +224,7 @@
 				2C763CC0F26B4A868286ABC4 /* Views/Components/MemorizeCardView.swift in Sources */,
 				781B25F7302A4D27A5031663 /* Views/Components/QuizPreviewRow.swift in Sources */,
 				4838CC634319472BB587CB38 /* Views/Components/TimeRingView.swift in Sources */,
+				A1B2C3D4E5F6789012345678 /* Views/Components/OnboardingHowItWorksAnimations.swift in Sources */,
 				D0E6E0A8C3024A2DAA2A2AA5 /* Views/Components/UnrotSeesawOnboarding.swift in Sources */,
 				CF842E6ED0444A048AE789AB /* Views/FocusView.swift in Sources */,
 				AAD4E11D4FB14257AE382065 /* Views/GateQuizView.swift in Sources */,

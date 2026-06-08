@@ -5,6 +5,7 @@ struct FocusView: View {
   @EnvironmentObject private var appState: AppState
   @Binding var selectedTab: Int
   @State private var showPicker = false
+  @State private var showScreenTimeError = false
 
   var body: some View {
     NavigationStack {
@@ -51,9 +52,17 @@ struct FocusView: View {
       isPresented: $showPicker,
       selection: Binding(
         get: { appState.screenTime.selection },
-        set: { appState.screenTime.selection = $0 }
+        set: { appState.updateScreenTimeSelection($0) }
       )
     )
+    .alert("Screen Time access needed", isPresented: $showScreenTimeError) {
+      Button("OK", role: .cancel) {}
+    } message: {
+      Text(
+        appState.screenTime.authorizationError
+          ?? "Allow Screen Time in Settings to pick apps to block. The app picker only works on a real iPhone with Screen Time enabled."
+      )
+    }
   }
 
   private var metricsSection: some View {
@@ -150,52 +159,61 @@ struct FocusView: View {
           .foregroundStyle(UnrotTheme.text)
         Spacer()
         Button {
-          if appState.screenTime.isAuthorized {
-            showPicker = true
-          } else {
-            Task { await appState.screenTime.requestAuthorization() }
-          }
+          Task { await openBlockedAppsPicker() }
         } label: {
-          Text("+ Add")
+          Text(appState.screenTime.isAuthorized ? "+ Add" : "Allow")
             .font(.system(size: 16, weight: .bold, design: .rounded))
             .foregroundStyle(UnrotTheme.accent)
         }
         .buttonStyle(.plain)
       }
 
-      HStack(spacing: 12) {
-        Image(systemName: "shield.lefthalf.filled")
-          .font(.system(size: 23, weight: .bold))
-          .foregroundStyle(UnrotTheme.textMuted)
-          .frame(width: 28, height: 34)
-          .offset(x: -1.4)
-        VStack(alignment: .leading, spacing: 5) {
-          Text(appState.screenTime.shieldedAppCount == 0 ? "No apps selected yet" : "\(appState.screenTime.shieldedAppCount) apps selected")
-            .font(.system(size: 17, weight: .bold))
-            .foregroundStyle(UnrotTheme.text)
-          Text("Pick apps to lock when your scroll bank hits zero.")
-            .font(.system(size: 14))
-            .foregroundStyle(UnrotTheme.textMuted)
-            .fixedSize(horizontal: false, vertical: true)
-        }
-        Spacer()
-        Image(systemName: "chevron.right")
-          .font(.system(size: 16, weight: .bold))
-          .foregroundStyle(UnrotTheme.textMuted)
-          .offset(x: -5)
+      blockedAppsCard
+    }
+  }
+
+  private var blockedAppsCard: some View {
+    HStack(spacing: 12) {
+      Image(systemName: "shield.lefthalf.filled")
+        .font(.system(size: 23, weight: .bold))
+        .foregroundStyle(UnrotTheme.textMuted)
+        .frame(width: 28, height: 34)
+        .offset(x: -1.4)
+      VStack(alignment: .leading, spacing: 5) {
+        Text(appState.screenTime.shieldedAppCount == 0 ? "No apps selected yet" : "\(appState.screenTime.shieldedAppCount) apps selected")
+          .font(.system(size: 17, weight: .bold))
+          .foregroundStyle(UnrotTheme.text)
+        Text(
+          appState.screenTime.isAuthorized
+            ? "Pick apps to lock when your scroll bank hits zero."
+            : "Allow Screen Time to search and pick apps to block."
+        )
+        .font(.system(size: 14))
+        .foregroundStyle(UnrotTheme.textMuted)
+        .fixedSize(horizontal: false, vertical: true)
       }
-      .padding(.horizontal, 24)
-      .padding(.vertical, 22)
-      .background(UnrotTheme.card)
-      .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-      .themeCardShadow()
-      .onTapGesture {
-        if appState.screenTime.isAuthorized {
-          showPicker = true
-        } else {
-          Task { await appState.screenTime.requestAuthorization() }
-        }
-      }
+      Spacer()
+      Image(systemName: "chevron.right")
+        .font(.system(size: 16, weight: .bold))
+        .foregroundStyle(UnrotTheme.textMuted)
+        .offset(x: -5)
+    }
+    .padding(.horizontal, 24)
+    .padding(.vertical, 22)
+    .background(UnrotTheme.card)
+    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+    .themeCardShadow()
+    .onTapGesture {
+      Task { await openBlockedAppsPicker() }
+    }
+  }
+
+  private func openBlockedAppsPicker() async {
+    let ready = await appState.screenTime.prepareForPicker()
+    if ready {
+      showPicker = true
+    } else {
+      showScreenTimeError = true
     }
   }
 

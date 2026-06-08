@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import FamilyControls
 
 @MainActor
 final class AppState: ObservableObject {
@@ -78,6 +79,11 @@ final class AppState: ObservableObject {
     snapshot.studyReadingSecondsToday = 0
     snapshot.gateRewardClaimedMinutes = 0
     snapshot.gateRewardClaimedSectionIds = []
+    persist()
+  }
+
+  func setInterestedTopics(_ topics: [String]) {
+    snapshot.interestedTopics = topics
     persist()
   }
 
@@ -324,6 +330,12 @@ final class AppState: ObservableObject {
   }
 
   private func persist() { PersistenceStore.save(snapshot) }
+
+  func updateScreenTimeSelection(_ selection: FamilyActivitySelection) {
+    screenTime.updateSelection(selection)
+    syncShields()
+  }
+
   private func syncShields() {
     guard screenTime.isAuthorized else { return }
     if snapshot.remainingMinutes <= 0 { screenTime.applyShields() } else { screenTime.clearShields() }

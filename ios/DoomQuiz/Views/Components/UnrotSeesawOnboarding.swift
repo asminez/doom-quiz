@@ -37,11 +37,11 @@ struct UnrotSeesawOnboarding: View {
 
                 // Text Header
                 VStack(spacing: 12) {
-                    Text("Reverse Your Brainrot")
+                    Text("Let's balance it")
                         .font(.system(size: 32, weight: .black, design: .rounded))
                         .foregroundStyle(Color(red: 0.1, green: 0.1, blue: 0.1))
 
-                    Text("Swap mindless scrolling for meaningful learning.")
+                    Text("Study to earn scroll time — or scroll less and keep learning.")
                         .font(.system(size: 18, weight: .medium, design: .rounded))
                         .foregroundStyle(Color(red: 0.36, green: 0.38, blue: 0.42))
                         .multilineTextAlignment(.center)

@@ -6,6 +6,7 @@ struct SettingsView: View {
   @EnvironmentObject private var themeStore: ThemeStore
   @State private var showPicker = false
   @State private var showClearHistoryConfirm = false
+  @State private var showScreenTimeError = false
 
   private let budgets = [15, 30, 45, 60]
 
@@ -44,9 +45,17 @@ struct SettingsView: View {
       isPresented: $showPicker,
       selection: Binding(
         get: { appState.screenTime.selection },
-        set: { appState.screenTime.selection = $0 }
+        set: { appState.updateScreenTimeSelection($0) }
       )
     )
+    .alert("Screen Time access needed", isPresented: $showScreenTimeError) {
+      Button("OK", role: .cancel) {}
+    } message: {
+      Text(
+        appState.screenTime.authorizationError
+          ?? "Allow Screen Time to pick apps to block. This only works on a real iPhone with Screen Time enabled."
+      )
+    }
     .alert("Clear all history?", isPresented: $showClearHistoryConfirm) {
       Button("Cancel", role: .cancel) {}
       Button("Clear & restart", role: .destructive) {
@@ -211,89 +220,58 @@ struct SettingsView: View {
       HStack {
         settingsSectionTitle("Blocked apps")
         Spacer()
-        if !appState.screenTime.isMockMode {
-          Button {
-            if appState.screenTime.isAuthorized {
-              showPicker = true
-            } else {
-              Task { await appState.screenTime.requestAuthorization() }
-            }
-          } label: {
-            Text(appState.screenTime.isAuthorized ? "+ Add" : "Allow")
-              .font(.system(size: 16, weight: .bold, design: .rounded))
-              .foregroundStyle(UnrotTheme.accent)
-          }
-          .buttonStyle(.plain)
+        Button {
+          Task { await openBlockedAppsPicker() }
+        } label: {
+          Text(appState.screenTime.isAuthorized ? "+ Add" : "Allow")
+            .font(.system(size: 16, weight: .bold, design: .rounded))
+            .foregroundStyle(UnrotTheme.accent)
         }
+        .buttonStyle(.plain)
       }
 
       VStack(alignment: .leading, spacing: 12) {
-        if appState.screenTime.isMockMode {
-          settingsInfoRow(
-            icon: "ladybug.fill",
-            title: "Demo mode",
-            subtitle: "Blocking is simulated so you can test without Screen Time entitlements."
-          )
-          Button {
-            appState.screenTime.cycleMockBlockedApps()
-            HapticFeedback.selection()
-          } label: {
-            settingsActionLabel(
-              title: "Simulate blocked apps",
-              trailing: appState.screenTime.shieldedAppCount > 0
-                ? "\(appState.screenTime.shieldedAppCount)" : nil
-            )
-          }
-          .buttonStyle(.plain)
-        } else {
-          Button {
-            if appState.screenTime.isAuthorized {
-              showPicker = true
-            } else {
-              Task { await appState.screenTime.requestAuthorization() }
+        Button {
+          Task { await openBlockedAppsPicker() }
+        } label: {
+          HStack(spacing: 12) {
+            Image(systemName: "shield.lefthalf.filled")
+              .font(.system(size: 22, weight: .bold))
+              .foregroundStyle(UnrotTheme.textMuted)
+              .frame(width: 28)
+
+            VStack(alignment: .leading, spacing: 4) {
+              Text(
+                appState.screenTime.shieldedAppCount == 0
+                  ? "No apps selected yet"
+                  : "\(appState.screenTime.shieldedAppCount) apps selected"
+              )
+              .font(.system(size: 17, weight: .bold, design: .rounded))
+              .foregroundStyle(UnrotTheme.text)
+
+              Text(
+                appState.screenTime.isAuthorized
+                  ? "These lock when your scroll bank hits zero."
+                  : "Allow Screen Time to pick apps to block."
+              )
+              .font(.system(size: 14))
+              .foregroundStyle(UnrotTheme.textMuted)
+              .multilineTextAlignment(.leading)
             }
-          } label: {
-            HStack(spacing: 12) {
-              Image(systemName: "shield.lefthalf.filled")
-                .font(.system(size: 22, weight: .bold))
-                .foregroundStyle(UnrotTheme.textMuted)
-                .frame(width: 28)
 
-              VStack(alignment: .leading, spacing: 4) {
-                Text(
-                  appState.screenTime.shieldedAppCount == 0
-                    ? "No apps selected yet"
-                    : "\(appState.screenTime.shieldedAppCount) apps selected"
-                )
-                .font(.system(size: 17, weight: .bold, design: .rounded))
-                .foregroundStyle(UnrotTheme.text)
+            Spacer(minLength: 4)
 
-                Text("These lock when your scroll bank hits zero.")
-                  .font(.system(size: 14))
-                  .foregroundStyle(UnrotTheme.textMuted)
-                  .multilineTextAlignment(.leading)
-              }
-
-              Spacer(minLength: 4)
-
-              Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .bold))
-                .foregroundStyle(UnrotTheme.textMuted)
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(UnrotTheme.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .themeCardShadow()
-          }
-          .buttonStyle(.plain)
-
-          if !appState.screenTime.isAuthorized {
-            Text("Screen Time permission is required to block apps on a real device.")
-              .font(.system(size: 13))
+            Image(systemName: "chevron.right")
+              .font(.system(size: 14, weight: .bold))
               .foregroundStyle(UnrotTheme.textMuted)
           }
+          .padding(16)
+          .frame(maxWidth: .infinity, alignment: .leading)
+          .background(UnrotTheme.surface)
+          .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+          .themeCardShadow()
         }
+        .buttonStyle(.plain)
       }
       .padding(16)
       .frame(maxWidth: .infinity, alignment: .leading)
@@ -348,6 +326,15 @@ struct SettingsView: View {
   }
 
   // MARK: - Helpers
+
+  private func openBlockedAppsPicker() async {
+    let ready = await appState.screenTime.prepareForPicker()
+    if ready {
+      showPicker = true
+    } else {
+      showScreenTimeError = true
+    }
+  }
 
   private func settingsSectionTitle(_ title: String) -> some View {
     Text(title)

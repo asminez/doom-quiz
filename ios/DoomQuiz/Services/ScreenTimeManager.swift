@@ -4,36 +4,31 @@ import ManagedSettings
 
 @MainActor
 final class ScreenTimeManager: ObservableObject {
-  static let useMockScreenTime = true
+  private static let selectionKey = "doomquiz.screentime.selection"
 
   @Published var selection = FamilyActivitySelection()
   @Published var isAuthorized = false
   @Published var authorizationError: String?
-  @Published private(set) var mockBlockedAppCount = 0
 
   private let store = ManagedSettingsStore()
 
-  var isMockMode: Bool { Self.useMockScreenTime }
-
   var shieldedAppCount: Int {
-    if isMockMode { return mockBlockedAppCount }
-    return selection.applicationTokens.count + selection.categoryTokens.count
+    selection.applicationTokens.count
+      + selection.categoryTokens.count
+      + selection.webDomainTokens.count
+  }
+
+  var hasBlockedTargets: Bool { shieldedAppCount > 0 }
+
+  init() {
+    loadSelection()
   }
 
   func refreshAuthorization() {
-    if isMockMode {
-      isAuthorized = true
-      return
-    }
     isAuthorized = AuthorizationCenter.shared.authorizationStatus == .approved
   }
 
   func requestAuthorization() async {
-    if isMockMode {
-      isAuthorized = true
-      authorizationError = nil
-      return
-    }
     do {
       try await AuthorizationCenter.shared.requestAuthorization(for: .individual)
       isAuthorized = true
@@ -44,26 +39,49 @@ final class ScreenTimeManager: ObservableObject {
     }
   }
 
+  func prepareForPicker() async -> Bool {
+    if isAuthorized { return true }
+    await requestAuthorization()
+    return isAuthorized
+  }
+
+  func updateSelection(_ newValue: FamilyActivitySelection) {
+    selection = newValue
+    saveSelection()
+  }
+
   func applyShields() {
-    if isMockMode { return }
+    guard isAuthorized, hasBlockedTargets else {
+      clearShields()
+      return
+    }
+
     store.shield.applications = selection.applicationTokens.isEmpty
       ? nil : selection.applicationTokens
-    if !selection.categoryTokens.isEmpty {
-      store.shield.applicationCategories = .specific(selection.categoryTokens)
-    }
+
+    store.shield.applicationCategories = selection.categoryTokens.isEmpty
+      ? nil
+      : .specific(selection.categoryTokens)
+
+    store.shield.webDomains = selection.webDomainTokens.isEmpty
+      ? nil
+      : selection.webDomainTokens
   }
 
   func clearShields() {
-    if isMockMode { return }
     store.clearAllSettings()
   }
 
-  func cycleMockBlockedApps() {
-    guard isMockMode else { return }
-    mockBlockedAppCount = switch mockBlockedAppCount {
-    case 0: 3
-    case 3: 5
-    default: 0
-    }
+  private func loadSelection() {
+    guard
+      let data = UserDefaults.standard.data(forKey: Self.selectionKey),
+      let decoded = try? JSONDecoder().decode(FamilyActivitySelection.self, from: data)
+    else { return }
+    selection = decoded
+  }
+
+  private func saveSelection() {
+    guard let data = try? JSONEncoder().encode(selection) else { return }
+    UserDefaults.standard.set(data, forKey: Self.selectionKey)
   }
 }
