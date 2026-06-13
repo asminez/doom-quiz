@@ -30,7 +30,26 @@ final class AppState: ObservableObject {
   }
 
   var isLocked: Bool { snapshot.remainingMinutes <= 0 }
-  var studyMinutesReadToday: Int { snapshot.studyReadingSecondsToday / 120 }
+  var studyMinutesReadToday: Int { snapshot.studyMinutesToday }
+  var scrollMinutesToday: Int { snapshot.scrollMinutesToday }
+  var totalSectionsMastered: Int { snapshot.totalSectionsMastered }
+  var weeklyActivity: [DailyActivityRecord] { snapshot.lastNDays(7) }
+
+  struct MasteredContentItem: Identifiable, Hashable {
+    var id: String
+    var deckTitle: String
+    var sectionLabel: String
+  }
+
+  var masteredContentItems: [MasteredContentItem] {
+    snapshot.decks.flatMap { deck in
+      deck.masteredParagraphIds.compactMap { paragraphId in
+        let label = deck.paragraphs.first { $0.id == paragraphId }?.label ?? "Section"
+        return MasteredContentItem(id: "\(deck.id)-\(paragraphId)", deckTitle: deck.title, sectionLabel: label)
+      }
+    }
+    .sorted { $0.deckTitle.localizedStandardCompare($1.deckTitle) == .orderedAscending }
+  }
 
   func completeOnboarding() {
     PersistenceStore.hasCompletedOnboarding = true
@@ -68,7 +87,9 @@ final class AppState: ObservableObject {
 
   func addStudyReadingSeconds(_ seconds: Int) {
     guard seconds > 0 else { return }
-    snapshot.studyReadingSecondsToday += seconds
+    var next = snapshot
+    next.studyReadingSecondsToday += seconds
+    snapshot = next
     persist()
   }
 
@@ -329,7 +350,10 @@ final class AppState: ObservableObject {
     return "Study material (\(title)):\n\n\(PDFTextExtractor.clipForModel(content))"
   }
 
-  private func persist() { PersistenceStore.save(snapshot) }
+  private func persist() {
+    snapshot.syncTodayActivityHistory(today: PersistenceStore.todayKey())
+    PersistenceStore.save(snapshot)
+  }
 
   func updateScreenTimeSelection(_ selection: FamilyActivitySelection) {
     screenTime.updateSelection(selection)

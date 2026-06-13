@@ -11,7 +11,6 @@ struct StudyView: View {
   @State private var syllabusPDFSummary: String?
   @State private var showSyllabusPDFPicker = false
   @State private var isImportingPDF = false
-  @State private var showManualBuilder = false
   @State private var showPremiumSheet = false
   @State private var showCreateSections = false
   @State private var reviewIndex = 0
@@ -58,7 +57,7 @@ struct StudyView: View {
   var body: some View {
     NavigationStack {
       ScrollView {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 24) {
           headerRow
 
           if appState.isLocked {
@@ -66,17 +65,14 @@ struct StudyView: View {
           }
 
           if let deck = appState.activeDeck {
-            if showCreateSections {
-              switchLessonPickerMode(deck)
-            } else if isLoadingNewLesson(deck) {
+            if isLoadingNewLesson(deck) {
               lessonLoadingScreen(deck: deck)
             } else {
-              activeDeckHeader(deck)
-              activeDeckBody(deck)
+              activeLessonCard(deck)
               if !studyingDecks.isEmpty {
                 studyingSection
               }
-              switchLessonLink
+              switchLessonCollapsibleCard
             }
           } else if appState.isGenerating, let pendingLessonTitle {
             lessonLoadingScreen(title: pendingLessonTitle)
@@ -84,30 +80,12 @@ struct StudyView: View {
             newLessonSection
           }
         }
-        .padding(20)
-        .padding(.bottom, showCreateSections && appState.activeDeck != nil ? 12 : 32)
+        .padding(.horizontal, 20)
+        .padding(.top, 8)
+        .padding(.bottom, 32)
       }
       .background(QuizletTheme.bg)
-      .safeAreaInset(edge: .bottom, spacing: 0) {
-        if showCreateSections, let deck = appState.activeDeck {
-          CompressedLessonCard(deck: deck) {
-            withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
-              showCreateSections = false
-            }
-          }
-          .padding(.horizontal, 20)
-          .padding(.top, 8)
-          .padding(.bottom, 10)
-          .background(
-            QuizletTheme.bg
-              .shadow(color: .black.opacity(0.08), radius: 12, y: -4)
-          )
-        }
-      }
       .navigationBarHidden(true)
-      .sheet(isPresented: $showManualBuilder) {
-        ManualDeckBuilderView()
-      }
       .sheet(isPresented: $showPremiumSheet) {
         PremiumSheetView()
       }
@@ -123,70 +101,112 @@ struct StudyView: View {
 
   private var headerRow: some View {
     HStack(alignment: .center) {
-      Text("Study")
-        .font(.title.weight(.black))
-        .foregroundStyle(QuizletTheme.text)
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Study")
+          .font(.system(size: 29, weight: .black, design: .rounded))
+          .foregroundStyle(QuizletTheme.text)
+        Text("Read, quiz, earn scroll time")
+          .font(.system(size: 14, weight: .medium, design: .rounded))
+          .foregroundStyle(QuizletTheme.textMuted)
+      }
       Spacer()
       CompactTimeBadge(
         minutesReadToday: appState.studyMinutesReadToday
       )
     }
+    .padding(.bottom, 4)
+  }
+
+  private func activeLessonCard(_ deck: StudyDeck) -> some View {
+    VStack(alignment: .leading, spacing: 18) {
+      activeDeckHeader(deck)
+      activeDeckBody(deck)
+    }
+    .padding(18)
+    .background(QuizletTheme.card)
+    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 22, style: .continuous)
+        .stroke(QuizletTheme.border.opacity(0.55), lineWidth: 1)
+    )
+    .themeCardShadow(elevated: true)
   }
 
   private var lockedHero: some View {
-    VStack(alignment: .leading, spacing: 12) {
-      Text("Time's up")
-        .font(.title.weight(.heavy))
-        .foregroundStyle(QuizletTheme.text)
-      Text("Apps are locked. Read the section, then pass its quiz (6/6) to deposit minutes.")
-        .font(.subheadline)
-        .foregroundStyle(QuizletTheme.textMuted)
-        .fixedSize(horizontal: false, vertical: true)
+    HStack(alignment: .top, spacing: 14) {
+      Image(systemName: "lock.fill")
+        .font(.title3.weight(.bold))
+        .foregroundStyle(UnrotTheme.accent)
+        .frame(width: 44, height: 44)
+        .background(UnrotTheme.accentSoft)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
-      if appState.activeDeck != nil {
-        Button { appState.openGateQuiz() } label: {
-          Text("Pass section quiz to unlock")
-            .fontWeight(.heavy)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
+      VStack(alignment: .leading, spacing: 8) {
+        Text("Time's up")
+          .font(.system(size: 18, weight: .heavy, design: .rounded))
+          .foregroundStyle(QuizletTheme.text)
+        Text("Apps are locked. Pass the section quiz (6/6) to deposit minutes.")
+          .font(.system(size: 14, weight: .medium, design: .rounded))
+          .foregroundStyle(QuizletTheme.textMuted)
+          .fixedSize(horizontal: false, vertical: true)
+
+        if appState.activeDeck != nil {
+          Button { appState.openGateQuiz() } label: {
+            Text("Take section quiz")
+              .font(.system(size: 15, weight: .heavy, design: .rounded))
+              .frame(maxWidth: .infinity)
+              .padding(.vertical, 12)
+          }
+          .buttonStyle(.borderedProminent)
+          .tint(UnrotTheme.accent)
+          .padding(.top, 4)
         }
-        .buttonStyle(.borderedProminent)
-        .tint(QuizletTheme.primary)
       }
     }
     .padding(16)
-    .background(UnrotTheme.accentSoft)
-    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    .background(
+      LinearGradient(
+        colors: [UnrotTheme.accentSoft, QuizletTheme.card],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+      )
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
     .overlay(
-      RoundedRectangle(cornerRadius: 16, style: .continuous)
-        .stroke(UnrotTheme.accent.opacity(0.4), lineWidth: 1)
+      RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .stroke(UnrotTheme.accent.opacity(0.35), lineWidth: 1)
     )
     .themeCardShadow()
   }
 
   private func activeDeckHeader(_ deck: StudyDeck) -> some View {
-    HStack(alignment: .center, spacing: 12) {
-      VStack(alignment: .leading, spacing: 4) {
+    HStack(alignment: .top, spacing: 12) {
+      VStack(alignment: .leading, spacing: 6) {
         Text(deck.title)
-          .font(.title2.weight(.heavy))
+          .font(.system(size: 22, weight: .heavy, design: .rounded))
           .foregroundStyle(QuizletTheme.text)
           .lineLimit(2)
         Text(activeLessonSubtitle(for: deck))
-          .font(.caption.weight(.semibold))
+          .font(.system(size: 13, weight: .semibold, design: .rounded))
           .foregroundStyle(QuizletTheme.textMuted)
           .lineLimit(2)
       }
       Spacer(minLength: 8)
       if deck.isAIGenerated {
-        Text("\(deck.masteredParagraphIds.count)/\(LessonContentAmount.sectionCount)")
-          .font(.subheadline.weight(.heavy))
-          .foregroundStyle(deck.allSectionsMastered ? QuizletTheme.correct : QuizletTheme.primary)
-          .padding(.horizontal, 12)
-          .padding(.vertical, 8)
-          .background(
-            deck.allSectionsMastered ? QuizletTheme.correct.opacity(0.12) : QuizletTheme.primarySoft
-          )
-          .clipShape(Capsule())
+        VStack(spacing: 4) {
+          Text("\(deck.masteredParagraphIds.count)/\(LessonContentAmount.sectionCount)")
+            .font(.system(size: 17, weight: .heavy, design: .rounded))
+            .foregroundStyle(deck.allSectionsMastered ? QuizletTheme.correct : QuizletTheme.primary)
+          Text("sections")
+            .font(.system(size: 10, weight: .bold, design: .rounded))
+            .foregroundStyle(QuizletTheme.textMuted)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .background(
+          deck.allSectionsMastered ? QuizletTheme.correct.opacity(0.12) : QuizletTheme.primarySoft
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
       }
     }
   }
@@ -195,31 +215,25 @@ struct StudyView: View {
   private var newLessonSection: some View {
     VStack(alignment: .leading, spacing: 20) {
       Text("Start learning")
-        .font(.headline.weight(.heavy))
+        .font(.system(size: 20, weight: .heavy, design: .rounded))
         .foregroundStyle(QuizletTheme.text)
       lessonPickerContent
     }
   }
 
   /// Topic / syllabus / custom — new lesson or switch lesson form (no Studying list).
-  private var switchLessonForm: some View {
-    VStack(alignment: .leading, spacing: 20) {
-      topicHeroCard
+  private func switchLessonForm(embedded: Bool = false) -> some View {
+    VStack(alignment: .leading, spacing: embedded ? 16 : 20) {
+      topicHeroSection(embedded: embedded)
 
-      Text("More ways")
-        .font(.caption.weight(.bold))
-        .foregroundStyle(QuizletTheme.textMuted)
-        .padding(.leading, 4)
-
-      VStack(spacing: 10) {
-        syllabusOptionCard
-        lessonOptionRow(
-          icon: "square.and.pencil",
-          title: "My quiz",
-          subtitle: "Build your own flashcards & questions",
-          action: { showManualBuilder = true }
-        )
+      if !embedded {
+        Text("More ways")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(QuizletTheme.textMuted)
+          .padding(.leading, 4)
       }
+
+      syllabusOptionSection(embedded: embedded)
 
       if let err = appState.lastError {
         Text(err)
@@ -236,15 +250,15 @@ struct StudyView: View {
       if !studyingDecks.isEmpty {
         studyingSection
       }
-      switchLessonForm
+      switchLessonForm()
     }
   }
 
   /// Primary path — always visible (Quizlet-style search hero).
-  private var topicHeroCard: some View {
-    VStack(alignment: .leading, spacing: 12) {
+  private func topicHeroSection(embedded: Bool = false) -> some View {
+    let content = VStack(alignment: .leading, spacing: 12) {
       Label("Learn or improve", systemImage: "sparkles")
-        .font(.subheadline.weight(.heavy))
+        .font(.system(size: 14, weight: .heavy, design: .rounded))
         .foregroundStyle(QuizletTheme.primary)
 
       StudyInputField(
@@ -259,11 +273,11 @@ struct StudyView: View {
           ForEach(quickTopics, id: \.self) { idea in
             Button { aiTopic = idea } label: {
               Text(idea)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(QuizletTheme.primary)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 6)
-                .background(QuizletTheme.primarySoft)
+                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .foregroundStyle(aiTopic == idea ? .white : QuizletTheme.primary)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 7)
+                .background(aiTopic == idea ? QuizletTheme.primary : QuizletTheme.primarySoft)
                 .clipShape(Capsule())
             }
             .buttonStyle(.plain)
@@ -280,14 +294,28 @@ struct StudyView: View {
       }
       .disabled(appState.isGenerating || aiTopic.trimmingCharacters(in: .whitespacesAndNewlines).count < 3)
     }
-    .padding(16)
-    .background(QuizletTheme.primarySoft.opacity(0.55))
-    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 16, style: .continuous)
-        .stroke(QuizletTheme.primary.opacity(0.35), lineWidth: 1.5)
-    )
-    .themeCardShadow(elevated: true)
+
+    return Group {
+      if embedded {
+        content
+      } else {
+        content
+          .padding(18)
+          .background(
+            LinearGradient(
+              colors: [QuizletTheme.primarySoft.opacity(0.65), QuizletTheme.card],
+              startPoint: .topLeading,
+              endPoint: .bottomTrailing
+            )
+          )
+          .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+          .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+              .stroke(QuizletTheme.primary.opacity(0.28), lineWidth: 1.5)
+          )
+          .themeCardShadow(elevated: true)
+      }
+    }
   }
 
   private var aiContentAmountControl: some View {
@@ -305,8 +333,8 @@ struct StudyView: View {
     }
   }
 
-  private var syllabusOptionCard: some View {
-    VStack(alignment: .leading, spacing: 10) {
+  private func syllabusOptionSection(embedded: Bool = false) -> some View {
+    let content = VStack(alignment: .leading, spacing: 10) {
       Button { openSyllabusPDFPicker() } label: {
         lessonOptionRowContent(
           icon: "doc.fill",
@@ -332,45 +360,22 @@ struct StudyView: View {
         .disabled(appState.isGenerating || syllabusText.count < 20)
       }
     }
-    .padding(14)
-    .background(QuizletTheme.card)
-    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 14, style: .continuous)
-        .stroke(QuizletTheme.border, lineWidth: 1)
-    )
-    .themeCardShadow()
-  }
 
-  private func lessonOptionRow(
-    icon: String,
-    title: String,
-    subtitle: String,
-    badge: String? = nil,
-    action: @escaping () -> Void
-  ) -> some View {
-    Button(action: action) {
-      lessonOptionRowContent(
-        icon: icon,
-        title: title,
-        subtitle: subtitle,
-        trailing: AnyView(
-          Image(systemName: "chevron.right")
-            .font(.caption.weight(.bold))
-            .foregroundStyle(QuizletTheme.textMuted)
-        ),
-        badge: badge
-      )
+    return Group {
+      if embedded {
+        content
+      } else {
+        content
+          .padding(14)
+          .background(QuizletTheme.card)
+          .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+          .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+              .stroke(QuizletTheme.border, lineWidth: 1)
+          )
+          .themeCardShadow()
+      }
     }
-    .buttonStyle(.plain)
-    .padding(14)
-    .background(QuizletTheme.card)
-    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-    .overlay(
-      RoundedRectangle(cornerRadius: 14, style: .continuous)
-        .stroke(QuizletTheme.border, lineWidth: 1)
-    )
-    .themeCardShadow()
   }
 
   private func lessonOptionRowContent(
@@ -544,33 +549,55 @@ struct StudyView: View {
     }
   }
 
-  private func switchLessonPickerMode(_ deck: StudyDeck) -> some View {
-    VStack(alignment: .leading, spacing: 20) {
-      if !studyingDecks.isEmpty {
-        studyingSection
+  private var switchLessonCollapsibleCard: some View {
+    VStack(alignment: .leading, spacing: showCreateSections ? 16 : 0) {
+      Button {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
+          showCreateSections.toggle()
+        }
+      } label: {
+        HStack(spacing: 12) {
+          Image(systemName: "arrow.triangle.2.circlepath")
+            .font(.body.weight(.semibold))
+            .foregroundStyle(QuizletTheme.primary)
+            .frame(width: 40, height: 40)
+            .background(QuizletTheme.primarySoft)
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Switch lesson")
+              .font(.system(size: 15, weight: .bold, design: .rounded))
+              .foregroundStyle(QuizletTheme.text)
+            Text(showCreateSections ? "Pick a new topic or syllabus" : "Topic · Syllabus")
+              .font(.system(size: 12, weight: .medium, design: .rounded))
+              .foregroundStyle(QuizletTheme.textMuted)
+          }
+
+          Spacer(minLength: 4)
+
+          Image(systemName: showCreateSections ? "chevron.up" : "chevron.down")
+            .font(.caption.weight(.bold))
+            .foregroundStyle(QuizletTheme.textMuted)
+        }
       }
+      .buttonStyle(.plain)
 
-      Text("Switch lesson")
-        .font(.title2.weight(.heavy))
-        .foregroundStyle(QuizletTheme.text)
+      if showCreateSections {
+        Divider()
 
-      switchLessonForm
-    }
-    .transition(.opacity.combined(with: .move(edge: .top)))
-  }
-
-  private var switchLessonLink: some View {
-    Button {
-      withAnimation(.spring(response: 0.35, dampingFraction: 0.86)) {
-        showCreateSections = true
+        switchLessonForm(embedded: true)
+          .transition(.opacity.combined(with: .move(edge: .top)))
       }
-    } label: {
-      Text("Switch lesson")
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(QuizletTheme.primary)
-        .frame(maxWidth: .infinity)
     }
-    .padding(.top, 4)
+    .padding(16)
+    .background(UnrotTheme.surface.opacity(0.45))
+    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .stroke(QuizletTheme.border.opacity(0.55), lineWidth: 1)
+    )
+    .themeCardShadow()
+    .padding(.top, 8)
   }
 
   private func aiDeckBody(_ deck: StudyDeck) -> some View {
@@ -858,11 +885,12 @@ struct StudyView: View {
   }
 
   private var studyingSection: some View {
-    VStack(alignment: .leading, spacing: 10) {
-      Text("Studying")
-        .font(.caption.weight(.bold))
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Other lessons")
+        .font(.system(size: 13, weight: .heavy, design: .rounded))
         .foregroundStyle(QuizletTheme.textMuted)
-        .padding(.leading, 4)
+        .textCase(.uppercase)
+        .padding(.leading, 2)
 
       VStack(spacing: 8) {
         ForEach(studyingDecks) { deck in
@@ -872,32 +900,36 @@ struct StudyView: View {
               showCreateSections = false
             }
           } label: {
-            HStack(spacing: 10) {
+            HStack(spacing: 12) {
               Image(systemName: deck.isAIGenerated ? "book.fill" : "square.stack.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(QuizletTheme.primary)
-              VStack(alignment: .leading, spacing: 2) {
+                .frame(width: 36, height: 36)
+                .background(QuizletTheme.primarySoft)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+
+              VStack(alignment: .leading, spacing: 3) {
                 Text(deck.title)
-                  .font(.subheadline.weight(.semibold))
+                  .font(.system(size: 15, weight: .semibold, design: .rounded))
                   .foregroundStyle(QuizletTheme.text)
                   .lineLimit(1)
                 Text(studyingSubtitle(deck))
-                  .font(.caption)
+                  .font(.system(size: 12, weight: .medium, design: .rounded))
                   .foregroundStyle(QuizletTheme.textMuted)
                   .lineLimit(1)
               }
               Spacer()
-              Image(systemName: "arrow.up.left")
+              Image(systemName: "chevron.right")
                 .font(.caption.weight(.bold))
                 .foregroundStyle(QuizletTheme.textMuted)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
             .background(QuizletTheme.card)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .overlay(
-              RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(QuizletTheme.border, lineWidth: 1)
+              RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .stroke(QuizletTheme.border.opacity(0.55), lineWidth: 1)
             )
             .themeCardShadow()
           }

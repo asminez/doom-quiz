@@ -47,18 +47,31 @@ struct StudyLessonProgressView: View {
   }
 
   private var segmentedProgressBar: some View {
-    HStack(spacing: 6) {
-      ForEach(0..<expectedSectionCount, id: \.self) { index in
-        Capsule()
-          .fill(segmentColor(at: index))
-          .frame(height: 10)
-          .overlay {
-            if let paragraph = paragraph(at: index), masteredIds.contains(paragraph.id) {
-              Image(systemName: "checkmark")
-                .font(.system(size: 7, weight: .black))
-                .foregroundStyle(.white)
+    VStack(alignment: .leading, spacing: 8) {
+      HStack {
+        Text("Progress")
+          .font(.system(size: 11, weight: .heavy, design: .rounded))
+          .foregroundStyle(QuizletTheme.textMuted)
+          .textCase(.uppercase)
+        Spacer()
+        Text("\(masteredCount)/\(displaySectionCount)")
+          .font(.system(size: 11, weight: .bold, design: .rounded))
+          .foregroundStyle(QuizletTheme.primary)
+      }
+
+      HStack(spacing: 5) {
+        ForEach(0..<expectedSectionCount, id: \.self) { index in
+          Capsule()
+            .fill(segmentColor(at: index))
+            .frame(height: 8)
+            .overlay {
+              if let paragraph = paragraph(at: index), masteredIds.contains(paragraph.id) {
+                Image(systemName: "checkmark")
+                  .font(.system(size: 6, weight: .black))
+                  .foregroundStyle(.white)
+              }
             }
-          }
+        }
       }
     }
     .animation(.spring(response: 0.35), value: masteredCount)
@@ -77,30 +90,48 @@ struct StudyLessonProgressView: View {
   }
 
   private func paragraphCard(_ paragraph: StudyParagraph) -> some View {
-    Text(paragraph.body)
-      .font(.body)
-      .foregroundStyle(QuizletTheme.text)
-      .lineSpacing(5)
-      .fixedSize(horizontal: false, vertical: true)
-      .padding(16)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .background(QuizletTheme.card)
-      .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-      .overlay(
-        RoundedRectangle(cornerRadius: 16, style: .continuous)
-          .stroke(QuizletTheme.primary.opacity(0.45), lineWidth: 2)
+    VStack(alignment: .leading, spacing: 12) {
+      HStack(spacing: 8) {
+        Image(systemName: "text.alignleft")
+          .font(.caption.weight(.bold))
+          .foregroundStyle(QuizletTheme.primary)
+        Text(shortLabel(paragraph.label))
+          .font(.system(size: 13, weight: .heavy, design: .rounded))
+          .foregroundStyle(QuizletTheme.primary)
+          .lineLimit(2)
+      }
+
+      Text(paragraph.body)
+        .font(.system(size: 16, weight: .regular, design: .rounded))
+        .foregroundStyle(QuizletTheme.text)
+        .lineSpacing(6)
+        .fixedSize(horizontal: false, vertical: true)
+    }
+    .padding(18)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .background(
+      LinearGradient(
+        colors: [QuizletTheme.card, QuizletTheme.primarySoft.opacity(0.25)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
       )
-      .themeCardShadow(elevated: true)
+    )
+    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 18, style: .continuous)
+        .stroke(QuizletTheme.primary.opacity(0.35), lineWidth: 1.5)
+    )
+    .themeCardShadow(elevated: true)
   }
 
   private func sectionQuizButton(for paragraph: StudyParagraph) -> some View {
     Button {
       onTakeQuiz(paragraph.id)
     } label: {
-      Text("Take quiz")
-      .fontWeight(.heavy)
-      .frame(maxWidth: .infinity)
-      .padding(.vertical, 14)
+      Label("Take section quiz", systemImage: "checkmark.circle.fill")
+        .font(.system(size: 16, weight: .heavy, design: .rounded))
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
     }
     .buttonStyle(.borderedProminent)
     .tint(QuizletTheme.primary)

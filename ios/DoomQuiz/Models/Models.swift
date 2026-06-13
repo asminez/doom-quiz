@@ -167,7 +167,18 @@ enum LessonContentAmount: String, CaseIterable, Identifiable {
   var totalWords: Int { Self.sectionCount * wordsPerSection }
 }
 
+struct DailyActivityRecord: Codable, Hashable, Identifiable {
+  var date: String
+  var studyMinutes: Int
+  var scrollMinutes: Int
+
+  var id: String { date }
+}
+
 struct PersistedSnapshot: Codable {
+  static let maxHistoryDays = 90
+  static let studySecondsPerDisplayedMinute = 90
+
   var dailyBudgetMinutes: Int
   var remainingMinutes: Int
   var usedTodayMinutes: Int
@@ -176,6 +187,7 @@ struct PersistedSnapshot: Codable {
   var gateRewardClaimedMinutes: Int
   var gateRewardClaimedSectionIds: [String]
   var lastResetDate: String
+  var activityHistory: [DailyActivityRecord]
   var decks: [StudyDeck]
   var activeDeckId: String?
   var interestedTopics: [String]
@@ -183,7 +195,7 @@ struct PersistedSnapshot: Codable {
   enum CodingKeys: String, CodingKey {
     case dailyBudgetMinutes, remainingMinutes, usedTodayMinutes
     case quizEarnedTodayMinutes, studyReadingSecondsToday, gateRewardClaimedMinutes, gateRewardClaimedSectionIds
-    case lastResetDate, decks, activeDeckId, interestedTopics
+    case lastResetDate, activityHistory, decks, activeDeckId, interestedTopics
   }
 
   init(
@@ -195,6 +207,7 @@ struct PersistedSnapshot: Codable {
     gateRewardClaimedMinutes: Int = 0,
     gateRewardClaimedSectionIds: [String] = [],
     lastResetDate: String,
+    activityHistory: [DailyActivityRecord] = [],
     decks: [StudyDeck],
     activeDeckId: String?,
     interestedTopics: [String] = []
@@ -207,6 +220,7 @@ struct PersistedSnapshot: Codable {
     self.gateRewardClaimedMinutes = gateRewardClaimedMinutes
     self.gateRewardClaimedSectionIds = gateRewardClaimedSectionIds
     self.lastResetDate = lastResetDate
+    self.activityHistory = activityHistory
     self.decks = decks
     self.activeDeckId = activeDeckId
     self.interestedTopics = interestedTopics
@@ -222,9 +236,66 @@ struct PersistedSnapshot: Codable {
     gateRewardClaimedMinutes = try c.decodeIfPresent(Int.self, forKey: .gateRewardClaimedMinutes) ?? 0
     gateRewardClaimedSectionIds = try c.decodeIfPresent([String].self, forKey: .gateRewardClaimedSectionIds) ?? []
     lastResetDate = try c.decode(String.self, forKey: .lastResetDate)
+    activityHistory = try c.decodeIfPresent([DailyActivityRecord].self, forKey: .activityHistory) ?? []
     decks = try c.decode([StudyDeck].self, forKey: .decks)
     activeDeckId = try c.decodeIfPresent(String.self, forKey: .activeDeckId)
     interestedTopics = try c.decodeIfPresent([String].self, forKey: .interestedTopics) ?? []
+  }
+
+  var studyMinutesToday: Int {
+    studyReadingSecondsToday / Self.studySecondsPerDisplayedMinute
+  }
+
+  var scrollMinutesToday: Int {
+    max(0, dailyBudgetMinutes + quizEarnedTodayMinutes - remainingMinutes)
+  }
+
+  var totalSectionsMastered: Int {
+    decks.reduce(0) { $0 + $1.masteredParagraphIds.count }
+  }
+
+  mutating func archiveDayIfNeeded(beforeResettingFrom previousDate: String) {
+    guard !previousDate.isEmpty else { return }
+    guard !activityHistory.contains(where: { $0.date == previousDate }) else { return }
+    let study = studyReadingSecondsToday / Self.studySecondsPerDisplayedMinute
+    let scroll = max(0, dailyBudgetMinutes + quizEarnedTodayMinutes - remainingMinutes)
+    guard study > 0 || scroll > 0 else { return }
+    activityHistory.append(DailyActivityRecord(date: previousDate, studyMinutes: study, scrollMinutes: scroll))
+  }
+
+  mutating func syncTodayActivityHistory(today: String) {
+    usedTodayMinutes = scrollMinutesToday
+    let record = DailyActivityRecord(
+      date: today,
+      studyMinutes: studyMinutesToday,
+      scrollMinutes: scrollMinutesToday
+    )
+    if let index = activityHistory.firstIndex(where: { $0.date == today }) {
+      activityHistory[index] = record
+    } else {
+      activityHistory.append(record)
+    }
+    activityHistory.sort { $0.date > $1.date }
+    if activityHistory.count > Self.maxHistoryDays {
+      activityHistory = Array(activityHistory.prefix(Self.maxHistoryDays))
+    }
+  }
+
+  func record(for dateKey: String) -> DailyActivityRecord {
+    activityHistory.first { $0.date == dateKey }
+      ?? DailyActivityRecord(date: dateKey, studyMinutes: 0, scrollMinutes: 0)
+  }
+
+  func lastNDays(_ count: Int, endingOn end: Date = Date()) -> [DailyActivityRecord] {
+    let calendar = Calendar.current
+    let formatter = DateFormatter()
+    formatter.dateFormat = "yyyy-MM-dd"
+    formatter.timeZone = .current
+    return (0..<count).reversed().compactMap { offset in
+      guard let day = calendar.date(byAdding: .day, value: -offset, to: end) else { return nil }
+      let key = formatter.string(from: day)
+      return record(for: key)
+    }
   }
 }
 

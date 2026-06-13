@@ -53,6 +53,7 @@ enum PersistenceStore {
     var next = snapshot
     let today = todayKey()
     if next.lastResetDate != today {
+      next.archiveDayIfNeeded(beforeResettingFrom: next.lastResetDate)
       next.lastResetDate = today
       next.remainingMinutes = next.dailyBudgetMinutes
       next.usedTodayMinutes = 0
@@ -61,6 +62,7 @@ enum PersistenceStore {
       next.gateRewardClaimedMinutes = 0
       next.gateRewardClaimedSectionIds = []
     }
+    next.syncTodayActivityHistory(today: today)
     return next
   }
 }

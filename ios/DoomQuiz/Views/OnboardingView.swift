@@ -28,25 +28,27 @@ struct OnboardingView: View {
   private let yearFinalMessageReadPauseMs = 5_500
   private let scrollBoxTickMs = 72
 
+  private var yearRemovalTotalMs: Int {
+    YearBoxRemovalTiming.totalMs
+  }
+
   private var isYearGridStep: Bool { step == 3 }
   private var isHowItWorksAnimStep: Bool { (9...12).contains(step) }
 
   private let scrollBudgetChoices = [
+    "No scrolling",
     "15 minutes",
     "30 minutes",
     "45 minutes",
     "1 hour",
-    "1.5 hours",
-    "2 hours",
   ]
 
   private let scrollBudgetMinutes: [String: Int] = [
+    "No scrolling": 0,
     "15 minutes": 15,
     "30 minutes": 30,
     "45 minutes": 45,
     "1 hour": 60,
-    "1.5 hours": 90,
-    "2 hours": 120,
   ]
 
   private let interestCategories: [OnboardingInterestCategory] = [
@@ -80,15 +82,18 @@ struct OnboardingView: View {
 
   private let researchPoints: [OnboardingResearchPoint] = [
     .init(
-      summary: "Reading practice rebuilds the brain wiring dulled by endless scrolling.",
+      title: "Reading rebuilds the brain",
+      context: "Brain scans show sustained reading strengthens the attention and language networks that passive scrolling tends to weaken.",
       citation: "Huber et al. (2018), Nature Communications"
     ),
     .init(
-      summary: "A small barrier before a bad habit cuts how often you fall into it.",
+      title: "Even small barriers cut bad habits significantly",
+      context: "Adding a short pause or extra step before a temptation makes mindless scrolling far less automatic.",
       citation: "Gollwitzer & Sheeran (2006), Advances in Experimental Social Psychology"
     ),
     .init(
-      summary: "People rate knowledgeable people as more appealing.",
+      title: "The more knowledgeable, the more attractive 😉",
+      context: "People consistently rate others as more appealing when they show real knowledge — depth and curiosity stand out.",
       citation: "Prokosch et al. (2009), Evolution and Human Behavior"
     ),
   ]
@@ -142,14 +147,24 @@ struct OnboardingView: View {
       guard !Task.isCancelled else { return }
 
       await MainActor.run {
-        yearCommittedBoxesRemoved = committedBoxesRemoved
+        withAnimation(.easeInOut(duration: 0.35)) { yearCaptionPhase = 1 }
       }
 
-      try? await Task.sleep(for: .milliseconds(yearResultReadPauseMs))
+      try? await Task.sleep(for: .milliseconds(yearTitleReadPauseMs))
       guard !Task.isCancelled else { return }
 
       await MainActor.run {
-        withAnimation(.easeInOut(duration: 0.35)) { yearCaptionPhase = 1 }
+        withAnimation(.easeOut(duration: YearBoxRemovalTiming.stateChange)) {
+          yearCommittedBoxesRemoved = committedBoxesRemoved
+        }
+        Haptics.light()
+      }
+
+      try? await Task.sleep(for: .milliseconds(yearRemovalTotalMs + yearResultReadPauseMs))
+      guard !Task.isCancelled else { return }
+
+      await MainActor.run {
+        withAnimation(.easeInOut(duration: 0.35)) { yearCaptionPhase = 2 }
       }
 
       try? await Task.sleep(for: .milliseconds(yearTitleReadPauseMs))
@@ -171,7 +186,7 @@ struct OnboardingView: View {
       guard !Task.isCancelled else { return }
 
       await MainActor.run {
-        withAnimation(.easeInOut(duration: 0.35)) { yearCaptionPhase = 2 }
+        withAnimation(.easeInOut(duration: 0.35)) { yearCaptionPhase = 3 }
       }
 
       try? await Task.sleep(for: .milliseconds(yearTitleReadPauseMs))
@@ -220,7 +235,9 @@ struct OnboardingView: View {
   }
 
   private var scrollBoxesRemoved: Int {
-    Int((estimatedScrollHours * Double(yearDayCount) / 24.0).rounded())
+    let base = Int((estimatedScrollHours * Double(yearDayCount) / 24.0).rounded())
+    let bonus = selectedHours == "2 to 4 hours" ? 4 : 0
+    return base + bonus
   }
 
   private var scrollDaysPerYear: Int {
@@ -238,6 +255,8 @@ struct OnboardingView: View {
     case 0:
       return "This is how much you have in a year."
     case 1:
+      return "This is how much remains after\nsleep, eating, and work."
+    case 2:
       return "You scroll this much of\nyour time, right?"
     default:
       return "This is how much remains."
@@ -342,23 +361,21 @@ struct OnboardingView: View {
         .foregroundStyle(UnrotTheme.text)
 
       VStack(alignment: .leading, spacing: 20) {
-        scrollStatLine(
-          value: "\(Int(estimatedScrollHours)) hrs",
-          label: "a day",
-          visible: scrollStatsRevealed >= 1
-        )
-        scrollStatLine(
-          value: "\(scrollDaysPerYear) days",
-          label: "a year",
-          visible: scrollStatsRevealed >= 2
-        )
-        scrollStatLine(
-          value: "\(scrollYearsInLifetime) years",
-          label: "in a lifetime",
-          visible: scrollStatsRevealed >= 3
-        )
+        if scrollStatsRevealed >= 1 {
+          scrollStatLine(value: "\(Int(estimatedScrollHours)) hrs", label: "a day")
+            .transition(.opacity.combined(with: .move(edge: .bottom)))
+        }
+        if scrollStatsRevealed >= 2 {
+          scrollStatLine(value: "\(scrollDaysPerYear) days", label: "a year")
+            .transition(.opacity.combined(with: .move(edge: .bottom)))
+        }
+        if scrollStatsRevealed >= 3 {
+          scrollStatLine(value: "\(scrollYearsInLifetime) years", label: "in a lifetime")
+            .transition(.opacity.combined(with: .move(edge: .bottom)))
+        }
       }
       .padding(.top, 8)
+      .animation(.easeOut(duration: 0.35), value: scrollStatsRevealed)
 
       Spacer(minLength: 0)
 
@@ -375,7 +392,7 @@ struct OnboardingView: View {
     }
   }
 
-  private func scrollStatLine(value: String, label: String, visible: Bool) -> some View {
+  private func scrollStatLine(value: String, label: String) -> some View {
     HStack(alignment: .firstTextBaseline, spacing: 8) {
       Text(value)
         .font(.system(size: 44, weight: .black, design: .rounded))
@@ -384,21 +401,58 @@ struct OnboardingView: View {
         .font(.system(size: 22, weight: .semibold, design: .rounded))
         .foregroundStyle(UnrotTheme.textMuted)
     }
-    .opacity(visible ? 1 : 0)
-    .offset(y: visible ? 0 : 14)
   }
 
   private var yearDaysStep: some View {
-    yearDaysPhaseStep(
-      title: yearCaption,
-      footer: yearCaptionFooter,
-      footerBelowContent: yearGridFocused
-    ) {
-      OnboardingYearBoxesGrid(
-        boxCount: yearDayCount,
-        committedBoxesRemoved: yearCommittedBoxesRemoved,
-        scrollBoxesRemoved: yearScrollBoxesRemoved
-      )
+    Group {
+      if yearGridFocused {
+        VStack(spacing: 0) {
+          Spacer(minLength: 0)
+
+          VStack(spacing: 18) {
+            Text(yearCaption)
+              .font(.system(size: 20, weight: .heavy, design: .rounded))
+              .foregroundStyle(UnrotTheme.text)
+              .multilineTextAlignment(.center)
+              .fixedSize(horizontal: false, vertical: true)
+              .frame(maxWidth: .infinity)
+              .transition(.opacity.combined(with: .move(edge: .top)))
+
+            OnboardingYearBoxesGrid(
+              boxCount: yearDayCount,
+              committedBoxesRemoved: yearCommittedBoxesRemoved,
+              scrollBoxesRemoved: yearScrollBoxesRemoved,
+              focusedMode: true
+            )
+
+            if let yearCaptionFooter {
+              Text(yearCaptionFooter)
+                .font(.system(size: 15, weight: .semibold, design: .rounded))
+                .foregroundStyle(UnrotTheme.textMuted)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 12)
+                .transition(.opacity.combined(with: .move(edge: .bottom)))
+            }
+          }
+
+          Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+      } else {
+        yearDaysPhaseStep(
+          title: yearCaption,
+          footer: yearCaptionFooter,
+          footerBelowContent: false
+        ) {
+          OnboardingYearBoxesGrid(
+            boxCount: yearDayCount,
+            committedBoxesRemoved: yearCommittedBoxesRemoved,
+            scrollBoxesRemoved: yearScrollBoxesRemoved
+          )
+        }
+      }
     }
     .animation(.easeInOut(duration: 0.35), value: yearCaptionPhase)
     .animation(.easeInOut(duration: 0.65), value: yearGridFocused)
@@ -678,15 +732,20 @@ struct OnboardingView: View {
   // MARK: - Components
 
   private func researchCard(_ point: OnboardingResearchPoint) -> some View {
-    VStack(alignment: .leading, spacing: 10) {
-      Text(point.summary)
-        .font(.system(size: 18, weight: .bold, design: .rounded))
+    VStack(alignment: .leading, spacing: 12) {
+      Text(point.title)
+        .font(.system(size: 19, weight: .heavy, design: .rounded))
         .foregroundStyle(UnrotTheme.text)
         .fixedSize(horizontal: false, vertical: true)
 
-      Text(point.citation)
-        .font(.system(size: 11, weight: .medium, design: .rounded))
+      Text(point.context)
+        .font(.system(size: 15, weight: .medium, design: .rounded))
         .foregroundStyle(UnrotTheme.textMuted)
+        .fixedSize(horizontal: false, vertical: true)
+
+      Text(point.citation)
+        .font(.system(size: 11, weight: .semibold, design: .rounded))
+        .foregroundStyle(UnrotTheme.textMuted.opacity(0.85))
         .fixedSize(horizontal: false, vertical: true)
     }
     .padding(18)
@@ -789,6 +848,16 @@ struct OnboardingView: View {
   }
 }
 
+private enum YearBoxRemovalTiming {
+  static let spreadSeconds = 0.38
+  static let animSeconds = 0.42
+  static let stateChange = 0.95
+
+  static var totalMs: Int {
+    Int((spreadSeconds + animSeconds) * 1_000)
+  }
+}
+
 private struct OnboardingInterestCategory: Identifiable {
   let id = UUID()
   let name: String
@@ -840,10 +909,14 @@ private struct OnboardingYearBoxesGrid: View {
   let boxCount: Int
   let committedBoxesRemoved: Int
   let scrollBoxesRemoved: Int
+  var focusedMode: Bool = false
 
   private var totalRemoved: Int {
     committedBoxesRemoved + scrollBoxesRemoved
   }
+
+  private static let removalSpreadSeconds = YearBoxRemovalTiming.spreadSeconds
+  private static let removalAnimSeconds = YearBoxRemovalTiming.animSeconds
 
   private let columns = 15
   private let referenceGapRatio: CGFloat = 0.42
@@ -855,12 +928,21 @@ private struct OnboardingYearBoxesGrid: View {
   }
 
   var body: some View {
-    GeometryReader { geo in
-      let metrics = gridMetrics(width: geo.size.width)
-      fullYearGrid(metrics: metrics)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+    if focusedMode {
+      GeometryReader { geo in
+        let metrics = gridMetrics(width: geo.size.width)
+        remainingClusterGrid(metrics: metrics)
+          .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
+      }
+      .frame(height: clusterHeight(forWidth: UIScreen.main.bounds.width - 8))
+    } else {
+      GeometryReader { geo in
+        let metrics = gridMetrics(width: geo.size.width)
+        fullYearGrid(metrics: metrics)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+      }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
 
   private struct GridMetrics {
@@ -869,12 +951,69 @@ private struct OnboardingYearBoxesGrid: View {
     let corner: CGFloat
   }
 
+  private struct CellPos: Identifiable {
+    let index: Int
+    let row: Int
+    let col: Int
+    var id: Int { index }
+  }
+
+  private var activeCells: [CellPos] {
+    guard totalRemoved < boxCount else { return [] }
+    return (totalRemoved..<boxCount).map { index in
+      CellPos(index: index, row: index / columns, col: index % columns)
+    }
+  }
+
   private func gridMetrics(width: CGFloat) -> GridMetrics {
     let cellFit = width / (CGFloat(columns) + CGFloat(columns - 1) * referenceGapRatio)
     let cell = cellFit * boxSizeScale
     let spacing = cellFit * referenceGapRatio * gapScale
     let corner = max(1.2, cell * 0.14)
     return GridMetrics(cell: cell, spacing: spacing, corner: corner)
+  }
+
+  private func clusterHeight(forWidth width: CGFloat) -> CGFloat {
+    let metrics = gridMetrics(width: width)
+    let cells = activeCells
+    guard !cells.isEmpty else { return 0 }
+    let minRow = cells.map(\.row).min() ?? 0
+    let maxRow = cells.map(\.row).max() ?? 0
+    let clusterRows = maxRow - minRow + 1
+    return CGFloat(clusterRows) * metrics.cell + metrics.spacing * CGFloat(max(clusterRows - 1, 0))
+  }
+
+  @ViewBuilder
+  private func remainingClusterGrid(metrics: GridMetrics) -> some View {
+    let cells = activeCells
+    if cells.isEmpty {
+      EmptyView()
+    } else {
+      let minRow = cells.map(\.row).min() ?? 0
+      let maxRow = cells.map(\.row).max() ?? 0
+      let minCol = cells.map(\.col).min() ?? 0
+      let maxCol = cells.map(\.col).max() ?? 0
+      let clusterCols = maxCol - minCol + 1
+      let clusterRows = maxRow - minRow + 1
+      let step = metrics.cell + metrics.spacing
+      let gridWidth = CGFloat(clusterCols) * metrics.cell + metrics.spacing * CGFloat(max(clusterCols - 1, 0))
+      let gridHeight = CGFloat(clusterRows) * metrics.cell + metrics.spacing * CGFloat(max(clusterRows - 1, 0))
+
+      ZStack(alignment: .topLeading) {
+        ForEach(cells) { cell in
+          RoundedRectangle(cornerRadius: metrics.corner, style: .continuous)
+            .fill(UnrotTheme.accent)
+            .frame(width: metrics.cell, height: metrics.cell)
+            .offset(
+              x: CGFloat(cell.col - minCol) * step,
+              y: CGFloat(cell.row - minRow) * step
+            )
+        }
+      }
+      .frame(width: gridWidth, height: gridHeight)
+      .frame(maxWidth: .infinity, alignment: .center)
+      .transition(.scale(scale: 0.92).combined(with: .opacity))
+    }
   }
 
   @ViewBuilder
@@ -888,29 +1027,62 @@ private struct OnboardingYearBoxesGrid: View {
       spacing: metrics.spacing
     ) {
       ForEach(0..<boxCount, id: \.self) { index in
-        Group {
-          if boxKind(for: index) == .active {
-            RoundedRectangle(cornerRadius: metrics.corner, style: .continuous)
-              .fill(UnrotTheme.accent)
-          } else {
-            Color.clear
-          }
-        }
-        .frame(width: metrics.cell, height: metrics.cell)
+        RoundedRectangle(cornerRadius: metrics.corner, style: .continuous)
+          .fill(color(for: index))
+          .frame(width: metrics.cell, height: metrics.cell)
+          .opacity(opacity(for: index))
+          .scaleEffect(scale(for: index))
+          .animation(
+            .easeOut(duration: Self.removalAnimSeconds).delay(staggerDelay(for: index)),
+            value: committedBoxesRemoved
+          )
+          .animation(nil, value: scrollBoxesRemoved)
       }
     }
     .frame(width: gridWidth, height: gridHeight)
-    .animation(nil, value: committedBoxesRemoved)
-    .animation(nil, value: scrollBoxesRemoved)
   }
 
   private func boxKind(for index: Int) -> BoxKind {
-    index < totalRemoved ? .removed : .active
+    if index < committedBoxesRemoved { return .committedRemoved }
+    if index < totalRemoved { return .scrollRemoved }
+    return .active
+  }
+
+  private func color(for index: Int) -> Color {
+    switch boxKind(for: index) {
+    case .active: return UnrotTheme.accent
+    case .committedRemoved: return UnrotTheme.cardBorder.opacity(0.45)
+    case .scrollRemoved: return UnrotTheme.cardBorder.opacity(0.45)
+    }
+  }
+
+  private func opacity(for index: Int) -> Double {
+    switch boxKind(for: index) {
+    case .active: return 1
+    case .committedRemoved: return 0.5
+    case .scrollRemoved: return 0.42
+    }
+  }
+
+  private func scale(for index: Int) -> CGFloat {
+    switch boxKind(for: index) {
+    case .active: return 1
+    case .committedRemoved: return 0.9
+    case .scrollRemoved: return 0.9
+    }
+  }
+
+  private func staggerDelay(for index: Int) -> Double {
+    if index < committedBoxesRemoved {
+      return Double(index) / Double(max(committedBoxesRemoved, 1)) * Self.removalSpreadSeconds
+    }
+    return 0
   }
 
   private enum BoxKind {
     case active
-    case removed
+    case committedRemoved
+    case scrollRemoved
   }
 }
 
@@ -922,7 +1094,8 @@ private struct OnboardingTestimonial: Identifiable {
 
 private struct OnboardingResearchPoint: Identifiable {
   let id = UUID()
-  let summary: String
+  let title: String
+  let context: String
   let citation: String
 }
 

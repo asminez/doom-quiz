@@ -8,7 +8,7 @@ struct SettingsView: View {
   @State private var showClearHistoryConfirm = false
   @State private var showScreenTimeError = false
 
-  private let budgets = [15, 30, 45, 60]
+  private let budgets = [0, 15, 30, 45, 60]
 
   var body: some View {
     NavigationStack {
