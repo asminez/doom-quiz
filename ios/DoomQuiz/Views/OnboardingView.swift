@@ -16,6 +16,7 @@ struct OnboardingView: View {
   @State private var yearCaptionPhase = 0
   @State private var yearGridFocused = false
   @State private var scrollStatsRevealed = 0
+  @State private var changePitchSubtitleRevealed = false
 
   private let yearDayCount = 365
   private let lifeExpectancyYears = 80
@@ -27,13 +28,18 @@ struct OnboardingView: View {
   private let yearFocusReadPauseMs = 3_000
   private let yearFinalMessageReadPauseMs = 5_500
   private let scrollBoxTickMs = 72
+  private let scrollBoxSlowTickMs = 108
+  private let scrollBoxSlowCount = 3
 
-  private var yearRemovalTotalMs: Int {
-    YearBoxRemovalTiming.totalMs
+  private func scrollTickDelayMs(for tick: Int) -> Int {
+    tick <= scrollBoxSlowCount ? scrollBoxSlowTickMs : scrollBoxTickMs
   }
 
+  private var yearRemovalTotalMs: Int { YearBoxRemovalTiming.totalMs }
+
   private var isYearGridStep: Bool { step == 3 }
-  private var isHowItWorksAnimStep: Bool { (9...12).contains(step) }
+
+  private var isHowItWorksAnimStep: Bool { (7...9).contains(step) }
 
   private let scrollBudgetChoices = [
     "No scrolling",
@@ -82,18 +88,21 @@ struct OnboardingView: View {
 
   private let researchPoints: [OnboardingResearchPoint] = [
     .init(
+      icon: "brain.head.profile",
       title: "Reading rebuilds the brain",
       context: "Brain scans show sustained reading strengthens the attention and language networks that passive scrolling tends to weaken.",
       citation: "Huber et al. (2018), Nature Communications"
     ),
     .init(
+      icon: "hand.raised.fill",
       title: "Even small barriers cut bad habits significantly",
       context: "Adding a short pause or extra step before a temptation makes mindless scrolling far less automatic.",
       citation: "Gollwitzer & Sheeran (2006), Advances in Experimental Social Psychology"
     ),
     .init(
+      icon: "sparkles",
       title: "The more knowledgeable, the more attractive 😉",
-      context: "People consistently rate others as more appealing when they show real knowledge — depth and curiosity stand out.",
+      context: "People consistently rate others as more appealing when they show real knowledge. Depth and curiosity stand out.",
       citation: "Prokosch et al. (2009), Evolution and Human Behavior"
     ),
   ]
@@ -102,7 +111,7 @@ struct OnboardingView: View {
     ZStack {
       backgroundColor.ignoresSafeArea()
 
-      if step == 8 {
+      if step == 12 {
         fullScreenAnimationStep
           .transition(.opacity)
       } else if isHowItWorksAnimStep {
@@ -116,10 +125,11 @@ struct OnboardingView: View {
             case 1: hoursStep
             case 2: scrollStatsStep
             case 3: yearDaysStep
-            case 4: changeAndTestimonialsStep
-            case 5: researchStep
-            case 6: scrollBudgetStep
-            case 7: topicSelectionStep
+            case 4: changeStepOne
+            case 5: changeStepTwo
+            case 6: researchStep
+            case 10: scrollBudgetStep
+            case 11: topicSelectionStep
             default: EmptyView()
             }
           }
@@ -135,6 +145,9 @@ struct OnboardingView: View {
       }
     }
     .animation(isYearGridStep ? .easeInOut(duration: 0.42) : .easeInOut(duration: 0.28), value: step)
+    .onChange(of: step) { newStep in
+      Analytics.capture("onboarding_step", ["step": newStep])
+    }
     .task(id: step) {
       guard step == 3 else { return }
 
@@ -174,7 +187,7 @@ struct OnboardingView: View {
       if scrollTotal > 0 {
         for tick in 1...scrollTotal {
           guard !Task.isCancelled else { return }
-          try? await Task.sleep(for: .milliseconds(scrollBoxTickMs))
+          try? await Task.sleep(for: .milliseconds(scrollTickDelayMs(for: tick)))
           await MainActor.run {
             yearScrollBoxesRemoved = tick
             Haptics.scrollBoxTick()
@@ -248,6 +261,10 @@ struct OnboardingView: View {
     Int((estimatedScrollHours * Double(lifeExpectancyYears) / 24.0).rounded())
   }
 
+  private var remainingDaysLeft: Int {
+    max(0, yearDayCount - committedBoxesRemoved - scrollBoxesRemoved)
+  }
+
   private var backgroundColor: Color { UnrotTheme.bg }
 
   private var yearCaption: String {
@@ -257,7 +274,7 @@ struct OnboardingView: View {
     case 1:
       return "This is how much remains after\nsleep, eating, and work."
     case 2:
-      return "You scroll this much of\nyour time, right?"
+      return "You scroll this much of\nthe remaining time."
     default:
       return "This is how much remains."
     }
@@ -404,79 +421,127 @@ struct OnboardingView: View {
   }
 
   private var yearDaysStep: some View {
-    Group {
-      if yearGridFocused {
-        VStack(spacing: 0) {
-          Spacer(minLength: 0)
+    GeometryReader { geo in
+      let horizontalPadding: CGFloat = 28
+      let contentWidth = max(0, geo.size.width - horizontalPadding * 2)
+      let gridHeight = min(contentWidth * 1.38, geo.size.height * 0.55)
 
-          VStack(spacing: 18) {
-            Text(yearCaption)
-              .font(.system(size: 20, weight: .heavy, design: .rounded))
-              .foregroundStyle(UnrotTheme.text)
-              .multilineTextAlignment(.center)
-              .fixedSize(horizontal: false, vertical: true)
-              .frame(maxWidth: .infinity)
-              .transition(.opacity.combined(with: .move(edge: .top)))
-
-            OnboardingYearBoxesGrid(
-              boxCount: yearDayCount,
-              committedBoxesRemoved: yearCommittedBoxesRemoved,
-              scrollBoxesRemoved: yearScrollBoxesRemoved,
-              focusedMode: true
-            )
-
-            if let yearCaptionFooter {
-              Text(yearCaptionFooter)
-                .font(.system(size: 15, weight: .semibold, design: .rounded))
-                .foregroundStyle(UnrotTheme.textMuted)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxWidth: .infinity)
-                .padding(.horizontal, 12)
-                .transition(.opacity.combined(with: .move(edge: .bottom)))
-            }
-          }
-
-          Spacer(minLength: 0)
+      VStack(spacing: 0) {
+        if yearGridFocused {
+          Spacer(minLength: 16)
+        } else {
+          Spacer(minLength: 0).frame(maxHeight: 52)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-      } else {
-        yearDaysPhaseStep(
-          title: yearCaption,
-          footer: yearCaptionFooter,
-          footerBelowContent: false
-        ) {
+
+        Text(yearCaption)
+          .font(.system(size: 27, weight: .black, design: .rounded))
+          .foregroundStyle(UnrotTheme.text)
+          .multilineTextAlignment(.center)
+          .lineSpacing(2)
+          .fixedSize(horizontal: false, vertical: true)
+          .frame(maxWidth: .infinity)
+          .id(yearCaptionPhase)
+          .transition(.opacity)
+
+        if yearGridFocused {
+          remainingBoxesGrid(
+            totalCount: yearDayCount,
+            removedCount: yearCommittedBoxesRemoved + yearScrollBoxesRemoved,
+            width: contentWidth
+          )
+          .padding(.top, 32)
+          .transition(.opacity)
+        } else {
           OnboardingYearBoxesGrid(
             boxCount: yearDayCount,
             committedBoxesRemoved: yearCommittedBoxesRemoved,
-            scrollBoxesRemoved: yearScrollBoxesRemoved
+            scrollBoxesRemoved: yearScrollBoxesRemoved,
+            hideRemovedSlots: false
           )
+          .frame(height: gridHeight)
+          .padding(.top, 32)
+          .transition(.opacity)
         }
+
+        if yearGridFocused {
+          VStack(spacing: 4) {
+            Text("\(remainingDaysLeft)")
+              .font(.system(size: 48, weight: .black, design: .rounded))
+              .foregroundStyle(UnrotTheme.accent)
+              .contentTransition(.numericText())
+            Text("days left for you, each year")
+              .font(.system(size: 15, weight: .semibold, design: .rounded))
+              .foregroundStyle(UnrotTheme.textMuted)
+          }
+          .padding(.top, 28)
+          .transition(.opacity.combined(with: .scale(scale: 0.92)))
+        }
+
+        if let footer = yearCaptionFooter {
+          Text(footer)
+            .font(.system(size: 16, weight: .semibold, design: .rounded))
+            .foregroundStyle(UnrotTheme.textMuted)
+            .multilineTextAlignment(.center)
+            .lineSpacing(2)
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 22)
+            .transition(.opacity.combined(with: .move(edge: .bottom)))
+        }
+
+        Spacer(minLength: 16)
       }
+      .frame(maxWidth: .infinity, maxHeight: .infinity)
+      .padding(.horizontal, horizontalPadding)
     }
     .animation(.easeInOut(duration: 0.35), value: yearCaptionPhase)
     .animation(.easeInOut(duration: 0.65), value: yearGridFocused)
   }
 
-  private var changeAndTestimonialsStep: some View {
+  private var changeStepOne: some View {
+    VStack(spacing: 20) {
+      Spacer(minLength: 0)
+
+      Text("What if I told you we can change this?")
+        .font(.system(size: 32, weight: .black, design: .rounded))
+        .foregroundStyle(UnrotTheme.text)
+        .multilineTextAlignment(.center)
+        .fixedSize(horizontal: false, vertical: true)
+
+      Text("Many people here have done the same. They replaced scrolling with learning.")
+        .font(.system(size: 19, weight: .semibold, design: .rounded))
+        .foregroundStyle(UnrotTheme.textMuted)
+        .multilineTextAlignment(.center)
+        .fixedSize(horizontal: false, vertical: true)
+        .opacity(changePitchSubtitleRevealed ? 1 : 0)
+        .offset(y: changePitchSubtitleRevealed ? 0 : 12)
+        .animation(.easeOut(duration: 0.4), value: changePitchSubtitleRevealed)
+
+      Spacer(minLength: 0)
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .padding(.horizontal, 24)
+    .onAppear {
+      changePitchSubtitleRevealed = false
+      DispatchQueue.main.asyncAfter(deadline: .now() + 1.1) {
+        withAnimation(.easeOut(duration: 0.4)) {
+          changePitchSubtitleRevealed = true
+        }
+      }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 4.0) {
+        guard step == 4 else { return }
+        withAnimation { step = 5 }
+      }
+    }
+  }
+
+  private var changeStepTwo: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: 22) {
-        VStack(alignment: .leading, spacing: 12) {
-          Text("What if I told you we can change this?")
-            .font(.system(size: 30, weight: .black, design: .rounded))
-            .foregroundStyle(UnrotTheme.text)
-            .fixedSize(horizontal: false, vertical: true)
-
-          Text("Many people here have done the same — they replaced scrolling with learning.")
-            .font(.system(size: 18, weight: .semibold, design: .rounded))
-            .foregroundStyle(UnrotTheme.textMuted)
-            .fixedSize(horizontal: false, vertical: true)
-        }
-
         Text("Real people. Real results.")
           .font(.system(size: 24, weight: .black, design: .rounded))
           .foregroundStyle(UnrotTheme.text)
-          .padding(.top, 4)
+          .padding(.top, 2)
 
         ForEach(testimonials) { item in
           testimonialCard(item)
@@ -487,7 +552,7 @@ struct OnboardingView: View {
     .safeAreaInset(edge: .bottom) {
       continueButton("Continue") {
         Haptics.continueTap()
-        withAnimation { step = 5 }
+        withAnimation { step = 6 }
       }
       .padding(.top, 8)
     }
@@ -501,7 +566,7 @@ struct OnboardingView: View {
             .font(.system(size: 32, weight: .black, design: .rounded))
             .foregroundStyle(UnrotTheme.text)
 
-          Text("Three findings that explain why this works.")
+          Text("These published research explain why this works.")
             .font(.system(size: 17, weight: .medium, design: .rounded))
             .foregroundStyle(UnrotTheme.textMuted)
         }
@@ -517,7 +582,7 @@ struct OnboardingView: View {
     .safeAreaInset(edge: .bottom) {
       continueButton("Continue") {
         Haptics.continueTap()
-        withAnimation { step = 6 }
+        withAnimation { step = 7 }
       }
       .padding(.top, 8)
     }
@@ -565,7 +630,7 @@ struct OnboardingView: View {
       continueButton("Continue") {
         Haptics.continueTap()
         appState.setDailyBudget(selectedBudget)
-        withAnimation { step = 7 }
+        withAnimation { step = 11 }
       }
     }
   }
@@ -577,9 +642,14 @@ struct OnboardingView: View {
           .font(.system(size: 34, weight: .black, design: .rounded))
           .foregroundStyle(UnrotTheme.text)
 
-        Text("Select topics you're into.")
+        Text("Select the topics you are into.")
           .font(.body.weight(.medium))
           .foregroundStyle(UnrotTheme.textMuted)
+          .fixedSize(horizontal: false, vertical: true)
+
+        Text("Don't worry, you can tell the AI what you want to learn later.")
+          .font(.subheadline.weight(.medium))
+          .foregroundStyle(UnrotTheme.textMuted.opacity(0.9))
           .fixedSize(horizontal: false, vertical: true)
       }
       .padding(.bottom, 18)
@@ -613,7 +683,7 @@ struct OnboardingView: View {
       continueButton("Continue") {
         Haptics.continueTap()
         appState.setInterestedTopics(Array(selectedInterests).sorted())
-        withAnimation { step = 8 }
+        withAnimation { step = 12 }
       }
       .padding(.top, 12)
       .opacity(selectedInterests.count >= 3 ? 1 : 0.4)
@@ -653,20 +723,16 @@ struct OnboardingView: View {
       VStack(spacing: 0) {
         Group {
           switch step {
-          case 9:
-            OnboardingTopicAnimation {
-              withAnimation(.easeInOut(duration: 0.25)) { howItWorksReady = true }
-            }
-          case 10:
+          case 7:
             OnboardingJailAnimation {
               withAnimation(.easeInOut(duration: 0.25)) { howItWorksReady = true }
             }
-          case 11:
-            OnboardingQuizAnimation {
+          case 8:
+            OnboardingTopicAnimation {
               withAnimation(.easeInOut(duration: 0.25)) { howItWorksReady = true }
             }
-          case 12:
-            OnboardingWinWinAnimation {
+          case 9:
+            OnboardingQuizAnimation {
               withAnimation(.easeInOut(duration: 0.25)) { howItWorksReady = true }
             }
           default:
@@ -679,22 +745,10 @@ struct OnboardingView: View {
       }
 
       if howItWorksReady {
-        continueButton(step == 12 ? "Get started" : "Continue") {
+        continueButton("Continue") {
           Haptics.continueTap()
-          if step == 12 {
-            Haptics.success()
-            Task { @MainActor in
-              try? await Task.sleep(for: .milliseconds(400))
-              if let onFinished {
-                onFinished()
-              } else {
-                appState.completeOnboarding()
-              }
-            }
-          } else {
-            howItWorksReady = false
-            withAnimation(.easeInOut(duration: 0.35)) { step += 1 }
-          }
+          howItWorksReady = false
+          withAnimation(.easeInOut(duration: 0.35)) { step += 1 }
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 26)
@@ -703,7 +757,7 @@ struct OnboardingView: View {
     }
     .animation(.easeInOut(duration: 0.28), value: howItWorksReady)
     .onChange(of: step) { _, newStep in
-      if (9...12).contains(newStep) { howItWorksReady = false }
+      if (7...9).contains(newStep) { howItWorksReady = false }
     }
   }
 
@@ -717,9 +771,17 @@ struct OnboardingView: View {
       .ignoresSafeArea()
 
       if animationFinished {
-        continueButton("Continue") {
+        continueButton("Get started") {
           Haptics.continueTap()
-          withAnimation { step = 9 }
+          Haptics.success()
+          Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(400))
+            if let onFinished {
+              onFinished()
+            } else {
+              appState.completeOnboarding()
+            }
+          }
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 26)
@@ -733,19 +795,24 @@ struct OnboardingView: View {
 
   private func researchCard(_ point: OnboardingResearchPoint) -> some View {
     VStack(alignment: .leading, spacing: 12) {
-      Text(point.title)
-        .font(.system(size: 19, weight: .heavy, design: .rounded))
-        .foregroundStyle(UnrotTheme.text)
-        .fixedSize(horizontal: false, vertical: true)
+      HStack(alignment: .top, spacing: 12) {
+        Image(systemName: point.icon)
+          .font(.system(size: 20, weight: .bold))
+          .foregroundStyle(UnrotTheme.accent)
+          .frame(width: 40, height: 40)
+          .background(UnrotTheme.accent.opacity(0.14))
+          .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
 
-      Text(point.context)
-        .font(.system(size: 15, weight: .medium, design: .rounded))
-        .foregroundStyle(UnrotTheme.textMuted)
-        .fixedSize(horizontal: false, vertical: true)
+        Text(point.title)
+          .font(.system(size: 19, weight: .heavy, design: .rounded))
+          .foregroundStyle(UnrotTheme.text)
+          .fixedSize(horizontal: false, vertical: true)
+          .frame(maxWidth: .infinity, alignment: .leading)
+      }
 
       Text(point.citation)
-        .font(.system(size: 11, weight: .semibold, design: .rounded))
-        .foregroundStyle(UnrotTheme.textMuted.opacity(0.85))
+        .font(.system(size: 14, weight: .semibold, design: .rounded))
+        .foregroundStyle(UnrotTheme.textMuted)
         .fixedSize(horizontal: false, vertical: true)
     }
     .padding(18)
@@ -774,7 +841,7 @@ struct OnboardingView: View {
         .font(.system(size: 17, weight: .semibold, design: .rounded))
         .foregroundStyle(UnrotTheme.text)
         .fixedSize(horizontal: false, vertical: true)
-      Text("— \(item.author)")
+      Text(item.author)
         .font(.caption.weight(.semibold))
         .foregroundStyle(UnrotTheme.textMuted)
     }
@@ -785,55 +852,33 @@ struct OnboardingView: View {
     .themeCardShadow()
   }
 
-  private func yearDaysPhaseStep<Content: View>(
-    title: String,
-    titleFont: Font = .system(size: 20, weight: .heavy, design: .rounded),
-    footer: String?,
-    footerBelowContent: Bool = false,
-    @ViewBuilder content: () -> Content
-  ) -> some View {
-    VStack(spacing: 10) {
-      Text(title)
-        .font(titleFont)
-        .foregroundStyle(UnrotTheme.text)
-        .multilineTextAlignment(.center)
-        .fixedSize(horizontal: false, vertical: true)
-        .frame(maxWidth: .infinity)
-        .transition(.opacity.combined(with: .move(edge: .top)))
+  /// Renders only the rows that still contain active boxes, but keeps each box in
+  /// its original column/position so the remaining block keeps the same shape.
+  private func remainingBoxesGrid(totalCount: Int, removedCount: Int, width: CGFloat) -> some View {
+    let columns = 15
+    let cellFit = width / (CGFloat(columns) + CGFloat(columns - 1) * 0.42)
+    let cell = cellFit * 0.85
+    let spacing = cellFit * 0.42 * 0.75
+    let corner = max(1.2, cell * 0.14)
+    let gridWidth = CGFloat(columns) * cell + spacing * CGFloat(columns - 1)
 
-      if footerBelowContent, let footer {
-        VStack(spacing: 12) {
-          content()
+    let firstActiveIndex = min(max(0, removedCount), totalCount)
+    let firstRowStart = (firstActiveIndex / columns) * columns
+    let renderIndices = Array(firstRowStart..<totalCount)
 
-          Text(footer)
-            .font(.system(size: 15, weight: .semibold, design: .rounded))
-            .foregroundStyle(UnrotTheme.textMuted)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 10)
-            .transition(.opacity.combined(with: .move(edge: .bottom)))
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-      } else {
-        content()
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-          .layoutPriority(1)
-
-        if let footer {
-          Text(footer)
-            .font(.system(size: 16, weight: .semibold, design: .rounded))
-            .foregroundStyle(UnrotTheme.textMuted)
-            .multilineTextAlignment(.center)
-            .fixedSize(horizontal: false, vertical: true)
-            .frame(maxWidth: .infinity)
-            .padding(.horizontal, 8)
-            .padding(.bottom, 4)
-            .transition(.opacity.combined(with: .move(edge: .bottom)))
-        }
+    return LazyVGrid(
+      columns: Array(repeating: GridItem(.fixed(cell), spacing: spacing), count: columns),
+      alignment: .leading,
+      spacing: spacing
+    ) {
+      ForEach(renderIndices, id: \.self) { index in
+        RoundedRectangle(cornerRadius: corner, style: .continuous)
+          .fill(index >= firstActiveIndex ? UnrotTheme.accent : Color.clear)
+          .frame(width: cell, height: cell)
       }
     }
-    .frame(maxWidth: .infinity, maxHeight: .infinity)
+    .frame(width: gridWidth)
+    .frame(maxWidth: .infinity, alignment: .center)
   }
 
   private func continueButton(_ title: String, action: @escaping () -> Void) -> some View {
@@ -909,7 +954,7 @@ private struct OnboardingYearBoxesGrid: View {
   let boxCount: Int
   let committedBoxesRemoved: Int
   let scrollBoxesRemoved: Int
-  var focusedMode: Bool = false
+  var hideRemovedSlots: Bool = false
 
   private var totalRemoved: Int {
     committedBoxesRemoved + scrollBoxesRemoved
@@ -928,21 +973,12 @@ private struct OnboardingYearBoxesGrid: View {
   }
 
   var body: some View {
-    if focusedMode {
-      GeometryReader { geo in
-        let metrics = gridMetrics(width: geo.size.width)
-        remainingClusterGrid(metrics: metrics)
-          .frame(width: geo.size.width, height: geo.size.height, alignment: .center)
-      }
-      .frame(height: clusterHeight(forWidth: UIScreen.main.bounds.width - 8))
-    } else {
-      GeometryReader { geo in
-        let metrics = gridMetrics(width: geo.size.width)
-        fullYearGrid(metrics: metrics)
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-      }
-      .frame(maxWidth: .infinity, maxHeight: .infinity)
+    GeometryReader { geo in
+      let metrics = gridMetrics(width: geo.size.width)
+      fullYearGrid(metrics: metrics)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
     }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
   }
 
   private struct GridMetrics {
@@ -951,69 +987,12 @@ private struct OnboardingYearBoxesGrid: View {
     let corner: CGFloat
   }
 
-  private struct CellPos: Identifiable {
-    let index: Int
-    let row: Int
-    let col: Int
-    var id: Int { index }
-  }
-
-  private var activeCells: [CellPos] {
-    guard totalRemoved < boxCount else { return [] }
-    return (totalRemoved..<boxCount).map { index in
-      CellPos(index: index, row: index / columns, col: index % columns)
-    }
-  }
-
   private func gridMetrics(width: CGFloat) -> GridMetrics {
     let cellFit = width / (CGFloat(columns) + CGFloat(columns - 1) * referenceGapRatio)
     let cell = cellFit * boxSizeScale
     let spacing = cellFit * referenceGapRatio * gapScale
     let corner = max(1.2, cell * 0.14)
     return GridMetrics(cell: cell, spacing: spacing, corner: corner)
-  }
-
-  private func clusterHeight(forWidth width: CGFloat) -> CGFloat {
-    let metrics = gridMetrics(width: width)
-    let cells = activeCells
-    guard !cells.isEmpty else { return 0 }
-    let minRow = cells.map(\.row).min() ?? 0
-    let maxRow = cells.map(\.row).max() ?? 0
-    let clusterRows = maxRow - minRow + 1
-    return CGFloat(clusterRows) * metrics.cell + metrics.spacing * CGFloat(max(clusterRows - 1, 0))
-  }
-
-  @ViewBuilder
-  private func remainingClusterGrid(metrics: GridMetrics) -> some View {
-    let cells = activeCells
-    if cells.isEmpty {
-      EmptyView()
-    } else {
-      let minRow = cells.map(\.row).min() ?? 0
-      let maxRow = cells.map(\.row).max() ?? 0
-      let minCol = cells.map(\.col).min() ?? 0
-      let maxCol = cells.map(\.col).max() ?? 0
-      let clusterCols = maxCol - minCol + 1
-      let clusterRows = maxRow - minRow + 1
-      let step = metrics.cell + metrics.spacing
-      let gridWidth = CGFloat(clusterCols) * metrics.cell + metrics.spacing * CGFloat(max(clusterCols - 1, 0))
-      let gridHeight = CGFloat(clusterRows) * metrics.cell + metrics.spacing * CGFloat(max(clusterRows - 1, 0))
-
-      ZStack(alignment: .topLeading) {
-        ForEach(cells) { cell in
-          RoundedRectangle(cornerRadius: metrics.corner, style: .continuous)
-            .fill(UnrotTheme.accent)
-            .frame(width: metrics.cell, height: metrics.cell)
-            .offset(
-              x: CGFloat(cell.col - minCol) * step,
-              y: CGFloat(cell.row - minRow) * step
-            )
-        }
-      }
-      .frame(width: gridWidth, height: gridHeight)
-      .frame(maxWidth: .infinity, alignment: .center)
-      .transition(.scale(scale: 0.92).combined(with: .opacity))
-    }
   }
 
   @ViewBuilder
@@ -1059,8 +1038,8 @@ private struct OnboardingYearBoxesGrid: View {
   private func opacity(for index: Int) -> Double {
     switch boxKind(for: index) {
     case .active: return 1
-    case .committedRemoved: return 0.5
-    case .scrollRemoved: return 0.42
+    case .committedRemoved: return hideRemovedSlots ? 0 : 0.5
+    case .scrollRemoved: return hideRemovedSlots ? 0 : 0.42
     }
   }
 
@@ -1094,6 +1073,7 @@ private struct OnboardingTestimonial: Identifiable {
 
 private struct OnboardingResearchPoint: Identifiable {
   let id = UUID()
+  let icon: String
   let title: String
   let context: String
   let citation: String

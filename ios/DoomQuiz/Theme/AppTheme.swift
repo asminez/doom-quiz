@@ -96,11 +96,11 @@ enum QuizletTheme {
   static let card = UnrotTheme.card
   static let inputBg = UnrotTheme.surface
   static let primary = dynamic(
-    light: UIColor(red: 0.07, green: 0.44, blue: 0.84, alpha: 1),
+    light: UIColor(red: 0.03, green: 0.26, blue: 0.62, alpha: 1),
     dark: UIColor(red: 0.13, green: 0.53, blue: 0.98, alpha: 1)
   )
   static let primarySoft = dynamic(
-    light: UIColor(red: 0.07, green: 0.44, blue: 0.84, alpha: 0.14),
+    light: UIColor(red: 0.03, green: 0.26, blue: 0.62, alpha: 0.12),
     dark: UIColor(red: 0.13, green: 0.53, blue: 0.98, alpha: 0.12)
   )
   static let text = UnrotTheme.text

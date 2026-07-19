@@ -23,3 +23,31 @@ struct CompactTimeBadge: View {
     .themeCardShadow()
   }
 }
+
+/// Topic emoji from the AI lesson, or a fallback SF Symbol.
+struct DeckTopicIcon: View {
+  let deck: StudyDeck?
+  var symbolSize: CGFloat = 17
+  var emojiSize: CGFloat = 22
+
+  var body: some View {
+    Group {
+      if deck == nil {
+        Image(systemName: "plus")
+          .font(.system(size: symbolSize, weight: .semibold))
+          .foregroundStyle(QuizletTheme.primary)
+      } else if let emoji = deck?.topicEmoji, !emoji.isEmpty {
+        Text(emoji)
+          .font(.system(size: emojiSize))
+      } else if deck?.isAIGenerated == true {
+        Image(systemName: "book.fill")
+          .font(.system(size: symbolSize, weight: .semibold))
+          .foregroundStyle(QuizletTheme.primary)
+      } else {
+        Image(systemName: "square.stack.fill")
+          .font(.system(size: symbolSize, weight: .semibold))
+          .foregroundStyle(QuizletTheme.primary)
+      }
+    }
+  }
+}

@@ -28,5 +28,6 @@ struct PremiumSheetView: View {
       }
     }
     .presentationDetents([.medium])
+    .onAppear { Analytics.capture("paywall_shown") }
   }
 }

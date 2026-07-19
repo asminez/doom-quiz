@@ -65,17 +65,15 @@ struct StudyView: View {
           }
 
           if let deck = appState.activeDeck {
-            if isLoadingNewLesson(deck) {
-              lessonLoadingScreen(deck: deck)
-            } else {
-              activeLessonCard(deck)
+            activeLessonCard(deck)
+            if !isLoadingNewLesson(deck) {
               if !studyingDecks.isEmpty {
                 studyingSection
               }
               switchLessonCollapsibleCard
             }
           } else if appState.isGenerating, let pendingLessonTitle {
-            lessonLoadingScreen(title: pendingLessonTitle)
+            pendingLessonCard(title: pendingLessonTitle)
           } else {
             newLessonSection
           }
@@ -118,9 +116,43 @@ struct StudyView: View {
   }
 
   private func activeLessonCard(_ deck: StudyDeck) -> some View {
-    VStack(alignment: .leading, spacing: 18) {
+    let loading = isLoadingNewLesson(deck)
+    return VStack(alignment: .leading, spacing: 18) {
       activeDeckHeader(deck)
-      activeDeckBody(deck)
+      if loading {
+        lessonLoadingInlineContent
+          .transition(.opacity)
+      } else {
+        activeDeckBody(deck)
+          .transition(.opacity)
+      }
+    }
+    .padding(18)
+    .background(QuizletTheme.card)
+    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+    .overlay(
+      RoundedRectangle(cornerRadius: 22, style: .continuous)
+        .stroke(QuizletTheme.border.opacity(0.55), lineWidth: 1)
+    )
+    .themeCardShadow(elevated: true)
+    .animation(.easeInOut(duration: 0.45), value: loading)
+  }
+
+  private func pendingLessonCard(title: String) -> some View {
+    VStack(alignment: .leading, spacing: 18) {
+      HStack(alignment: .top, spacing: 12) {
+        VStack(alignment: .leading, spacing: 6) {
+          Text(title)
+            .font(.system(size: 22, weight: .heavy, design: .rounded))
+            .foregroundStyle(QuizletTheme.text)
+            .lineLimit(2)
+          Text("Building your lesson…")
+            .font(.system(size: 13, weight: .semibold, design: .rounded))
+            .foregroundStyle(QuizletTheme.textMuted)
+        }
+        Spacer(minLength: 8)
+      }
+      lessonLoadingInlineContent
     }
     .padding(18)
     .background(QuizletTheme.card)
@@ -183,13 +215,15 @@ struct StudyView: View {
     HStack(alignment: .top, spacing: 12) {
       VStack(alignment: .leading, spacing: 6) {
         Text(deck.title)
-          .font(.system(size: 22, weight: .heavy, design: .rounded))
+          .font(.system(size: 24, weight: .heavy, design: .rounded))
           .foregroundStyle(QuizletTheme.text)
           .lineLimit(2)
-        Text(activeLessonSubtitle(for: deck))
-          .font(.system(size: 13, weight: .semibold, design: .rounded))
-          .foregroundStyle(QuizletTheme.textMuted)
-          .lineLimit(2)
+        if !deck.isAIGenerated {
+          Text(activeLessonSubtitle(for: deck))
+            .font(.system(size: 13, weight: .semibold, design: .rounded))
+            .foregroundStyle(QuizletTheme.textMuted)
+            .lineLimit(2)
+        }
       }
       Spacer(minLength: 8)
       if deck.isAIGenerated {
@@ -257,10 +291,6 @@ struct StudyView: View {
   /// Primary path — always visible (Quizlet-style search hero).
   private func topicHeroSection(embedded: Bool = false) -> some View {
     let content = VStack(alignment: .leading, spacing: 12) {
-      Label("Learn or improve", systemImage: "sparkles")
-        .font(.system(size: 14, weight: .heavy, design: .rounded))
-        .foregroundStyle(QuizletTheme.primary)
-
       StudyInputField(
         placeholder: "Enter the topic you want to learn",
         text: $aiTopic,
@@ -302,16 +332,15 @@ struct StudyView: View {
         content
           .padding(18)
           .background(
-            LinearGradient(
-              colors: [QuizletTheme.primarySoft.opacity(0.65), QuizletTheme.card],
-              startPoint: .topLeading,
-              endPoint: .bottomTrailing
-            )
+            ZStack {
+              QuizletTheme.card
+              QuizletTheme.primary.opacity(0.14)
+            }
           )
           .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
           .overlay(
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-              .stroke(QuizletTheme.primary.opacity(0.28), lineWidth: 1.5)
+              .stroke(QuizletTheme.primary.opacity(0.45), lineWidth: 1.5)
           )
           .themeCardShadow(elevated: true)
       }
@@ -334,24 +363,38 @@ struct StudyView: View {
   }
 
   private func syllabusOptionSection(embedded: Bool = false) -> some View {
-    let content = VStack(alignment: .leading, spacing: 10) {
+    let content = VStack(alignment: .leading, spacing: 12) {
       Button { openSyllabusPDFPicker() } label: {
-        lessonOptionRowContent(
-          icon: "doc.fill",
-          title: "Syllabus",
-          subtitle: syllabusPDFSubtitle,
-          trailing: isImportingPDF ? AnyView(ProgressView()) : AnyView(
-            Image(systemName: "chevron.right")
-              .font(.caption.weight(.bold))
-              .foregroundStyle(QuizletTheme.textMuted)
-          ),
-          badge: "Premium"
-        )
+        Group {
+          if isImportingPDF {
+            ProgressView()
+              .tint(.white)
+          } else {
+            Label("Upload", systemImage: "doc.fill")
+              .font(.system(size: 16, weight: .heavy, design: .rounded))
+          }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 14)
       }
-      .buttonStyle(.plain)
+      .buttonStyle(.borderedProminent)
+      .tint(QuizletTheme.primary)
       .disabled(isImportingPDF)
 
+      Text(syllabusUploadCaption)
+        .font(.system(size: 13, weight: .medium, design: .rounded))
+        .foregroundStyle(QuizletTheme.textMuted)
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+
       if syllabusPDFName != nil {
+        if let summary = syllabusPDFSummary, !summary.isEmpty {
+          Text(summary)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(QuizletTheme.primary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+
         aiContentAmountControl
 
         generateButton(title: "Start lesson from PDF") {
@@ -378,46 +421,11 @@ struct StudyView: View {
     }
   }
 
-  private func lessonOptionRowContent(
-    icon: String,
-    title: String,
-    subtitle: String,
-    trailing: AnyView,
-    badge: String? = nil
-  ) -> some View {
-    HStack(spacing: 12) {
-      Image(systemName: icon)
-        .font(.title3.weight(.semibold))
-        .foregroundStyle(QuizletTheme.primary)
-        .frame(width: 44, height: 44)
-        .background(QuizletTheme.primarySoft)
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
-
-      VStack(alignment: .leading, spacing: 2) {
-        HStack(spacing: 6) {
-          Text(title)
-            .font(.subheadline.weight(.bold))
-            .foregroundStyle(QuizletTheme.text)
-          if let badge {
-            Text(badge)
-              .font(.caption2.weight(.bold))
-              .foregroundStyle(QuizletTheme.textMuted)
-              .padding(.horizontal, 6)
-              .padding(.vertical, 2)
-              .background(QuizletTheme.inputBg)
-              .clipShape(Capsule())
-          }
-        }
-        Text(subtitle)
-          .font(.caption)
-          .foregroundStyle(QuizletTheme.textMuted)
-          .lineLimit(2)
-          .multilineTextAlignment(.leading)
-      }
-
-      Spacer(minLength: 4)
-      trailing
+  private var syllabusUploadCaption: String {
+    if let name = syllabusPDFName {
+      return name
     }
+    return "Upload lecture notes or syllabus"
   }
 
   private func generateButton(title: String, action: @escaping () async -> Void) -> some View {
@@ -436,15 +444,11 @@ struct StudyView: View {
     }
     .buttonStyle(.borderedProminent)
     .tint(QuizletTheme.primary)
-    .disabled(appState.isGenerating || appState.isLoadingLessonSections)
+    .disabled(appState.isGenerating)
   }
 
   private func openSyllabusPDFPicker() {
-    if PremiumStore.isPremium {
-      showSyllabusPDFPicker = true
-    } else {
-      showPremiumSheet = true
-    }
+    showSyllabusPDFPicker = true
   }
 
   private func handleSyllabusPDFImport(_ result: Result<[URL], Error>) {
@@ -470,10 +474,6 @@ struct StudyView: View {
   }
 
   private func generateSyllabusQuiz() async {
-    guard PremiumStore.isPremium else {
-      showPremiumSheet = true
-      return
-    }
     let body = syllabusText.trimmingCharacters(in: .whitespacesAndNewlines)
     guard body.count >= 20 else {
       appState.lastError = "Import a PDF first."
@@ -513,31 +513,6 @@ struct StudyView: View {
 
   private func isLoadingNewLesson(_ deck: StudyDeck) -> Bool {
     deck.paragraphs.isEmpty && (appState.isGenerating || appState.isLoadingLessonSections)
-  }
-
-  private func lessonLoadingScreen(deck: StudyDeck) -> some View {
-    lessonLoadingScreen(title: deck.title)
-  }
-
-  private func lessonLoadingScreen(title: String) -> some View {
-    VStack(alignment: .leading, spacing: 16) {
-      Text(title)
-        .font(.title2.weight(.heavy))
-        .foregroundStyle(QuizletTheme.text)
-        .lineLimit(2)
-
-      lessonLoadingCard
-    }
-  }
-
-  private var lessonLoadingCard: some View {
-    lessonLoadingCardContent
-  }
-
-  private var syllabusPDFSubtitle: String {
-    if let syllabusPDFSummary, !syllabusPDFSummary.isEmpty { return syllabusPDFSummary }
-    if let syllabusPDFName { return syllabusPDFName }
-    return "Upload PDF — lecture notes or syllabus"
   }
 
   @ViewBuilder
@@ -653,7 +628,7 @@ struct StudyView: View {
         Task { await startSectionQuiz(paragraphId: first.id, deck: deck) }
       }
     } label: {
-      Text("Review a section — earn up to \(RewardCalculator.sectionPerfectMinutes)m")
+      Text("Review a section to earn up to \(RewardCalculator.sectionPerfectMinutes)m")
         .fontWeight(.heavy)
         .frame(maxWidth: .infinity)
         .padding(.vertical, 16)
@@ -725,7 +700,7 @@ struct StudyView: View {
           .foregroundStyle(QuizletTheme.text)
 
         attemptQuizButton(
-          title: "Attempt quiz — earn up to 15 min",
+          title: "Attempt quiz to earn up to 15 min",
           prominent: true
         )
       }
@@ -786,11 +761,17 @@ struct StudyView: View {
     }
   }
 
-  private var lessonLoadingCardContent: some View {
+  private var lessonLoadingInlineContent: some View {
     VStack(alignment: .leading, spacing: 10) {
-      Text(currentLoadingPhaseTitle)
-        .font(.subheadline.weight(.semibold))
-        .foregroundStyle(QuizletTheme.text)
+      HStack(spacing: 8) {
+        ProgressView()
+          .controlSize(.small)
+          .tint(QuizletTheme.primary)
+        Text(currentLoadingPhaseTitle)
+          .font(.subheadline.weight(.bold))
+          .foregroundStyle(QuizletTheme.text)
+          .contentTransition(.opacity)
+      }
 
       Text("Turning your topic into a lesson you can actually read.")
         .font(.footnote)
@@ -799,7 +780,7 @@ struct StudyView: View {
       GeometryReader { geo in
         ZStack(alignment: .leading) {
           RoundedRectangle(cornerRadius: 8, style: .continuous)
-            .fill(QuizletTheme.card)
+            .fill(QuizletTheme.inputBg)
           RoundedRectangle(cornerRadius: 8, style: .continuous)
             .fill(QuizletTheme.primary)
             .frame(width: max(0, geo.size.width * loadingProgress))
@@ -807,6 +788,7 @@ struct StudyView: View {
         .frame(height: 8)
       }
       .frame(height: 8)
+      .padding(.top, 2)
 
       HStack {
         Text("\(Int(loadingProgress * 100))%")
@@ -818,11 +800,7 @@ struct StudyView: View {
           .foregroundStyle(QuizletTheme.textMuted)
       }
     }
-    .padding(16)
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(QuizletTheme.card)
-    .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-    .themeCardShadow()
     .task(id: appState.isGenerating || appState.isLoadingLessonSections) {
       guard appState.isGenerating || appState.isLoadingLessonSections else {
         loadingProgress = 0
@@ -856,6 +834,14 @@ struct StudyView: View {
         loadingProgress = 1.0
       }
     }
+  }
+
+  private var lessonLoadingCardContent: some View {
+    lessonLoadingInlineContent
+      .padding(16)
+      .background(QuizletTheme.card)
+      .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+      .themeCardShadow()
   }
 
   private func generateTopicQuiz() async {
@@ -901,12 +887,12 @@ struct StudyView: View {
             }
           } label: {
             HStack(spacing: 12) {
-              Image(systemName: deck.isAIGenerated ? "book.fill" : "square.stack.fill")
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(QuizletTheme.primary)
-                .frame(width: 36, height: 36)
-                .background(QuizletTheme.primarySoft)
-                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+              ZStack {
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                  .fill(QuizletTheme.primarySoft)
+                  .frame(width: 36, height: 36)
+                DeckTopicIcon(deck: deck, symbolSize: 15, emojiSize: 20)
+              }
 
               VStack(alignment: .leading, spacing: 3) {
                 Text(deck.title)

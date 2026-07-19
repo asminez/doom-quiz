@@ -7,6 +7,7 @@ struct SettingsView: View {
   @State private var showPicker = false
   @State private var showClearHistoryConfirm = false
   @State private var showScreenTimeError = false
+  @AppStorage("doomquiz.analytics.optOut") private var analyticsOptOut = false
 
   private let budgets = [0, 15, 30, 45, 60]
 
@@ -28,6 +29,9 @@ struct SettingsView: View {
             .padding(.top, 28)
 
           screenTimeSection
+            .padding(.top, 28)
+
+          privacySection
             .padding(.top, 28)
 
           advancedSection
@@ -62,7 +66,7 @@ struct SettingsView: View {
         appState.clearAllHistory()
       }
     } message: {
-      Text("Removes quizzes, scroll bank progress, and shows onboarding again — like a new install.")
+      Text("Removes quizzes, scroll bank progress, and shows onboarding again, like a new install.")
     }
   }
 
@@ -230,50 +234,114 @@ struct SettingsView: View {
         .buttonStyle(.plain)
       }
 
-      VStack(alignment: .leading, spacing: 12) {
-        Button {
-          Task { await openBlockedAppsPicker() }
+      Button {
+        Task { await openBlockedAppsPicker() }
+      } label: {
+        HStack(spacing: 12) {
+          Image(systemName: "shield.lefthalf.filled")
+            .font(.system(size: 22, weight: .bold))
+            .foregroundStyle(UnrotTheme.textMuted)
+            .frame(width: 28)
+
+          VStack(alignment: .leading, spacing: 4) {
+            Text(
+              appState.screenTime.shieldedAppCount == 0
+                ? "No apps selected yet"
+                : "\(appState.screenTime.shieldedAppCount) apps selected"
+            )
+            .font(.system(size: 17, weight: .bold, design: .rounded))
+            .foregroundStyle(UnrotTheme.text)
+
+            Text(
+              appState.screenTime.isAuthorized
+                ? "These lock when your scroll bank hits zero."
+                : "Allow Screen Time to pick apps to block."
+            )
+            .font(.system(size: 14))
+            .foregroundStyle(UnrotTheme.textMuted)
+            .multilineTextAlignment(.leading)
+          }
+
+          Spacer(minLength: 4)
+
+          Image(systemName: "chevron.right")
+            .font(.system(size: 14, weight: .bold))
+            .foregroundStyle(UnrotTheme.textMuted)
+        }
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(UnrotTheme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .overlay(
+          RoundedRectangle(cornerRadius: 20, style: .continuous)
+            .stroke(UnrotTheme.cardBorder.opacity(0.6), lineWidth: 1)
+        )
+        .themeCardShadow()
+      }
+      .buttonStyle(.plain)
+    }
+  }
+
+  // MARK: - Privacy
+
+  private var privacySection: some View {
+    VStack(alignment: .leading, spacing: 14) {
+      settingsSectionTitle("Privacy")
+
+      VStack(spacing: 0) {
+        HStack(alignment: .top, spacing: 12) {
+          Image(systemName: "chart.bar.xaxis")
+            .font(.system(size: 16, weight: .semibold))
+            .foregroundStyle(UnrotTheme.textMuted)
+            .frame(width: 28)
+
+          VStack(alignment: .leading, spacing: 4) {
+            Text("Share anonymous usage data")
+              .font(.system(size: 16, weight: .bold, design: .rounded))
+              .foregroundStyle(UnrotTheme.text)
+            Text("Helps us improve DoomQuiz. No personal data, no ads, never sold.")
+              .font(.system(size: 13))
+              .foregroundStyle(UnrotTheme.textMuted)
+              .fixedSize(horizontal: false, vertical: true)
+          }
+
+          Spacer(minLength: 8)
+
+          Toggle(
+            "",
+            isOn: Binding(
+              get: { !analyticsOptOut },
+              set: { analyticsOptOut = !$0 }
+            )
+          )
+          .labelsHidden()
+          .tint(UnrotTheme.accent)
+        }
+        .padding(16)
+
+        Divider()
+          .padding(.leading, 16)
+
+        NavigationLink {
+          PrivacyPolicyView()
         } label: {
           HStack(spacing: 12) {
-            Image(systemName: "shield.lefthalf.filled")
-              .font(.system(size: 22, weight: .bold))
+            Image(systemName: "hand.raised.fill")
+              .font(.system(size: 16, weight: .semibold))
               .foregroundStyle(UnrotTheme.textMuted)
               .frame(width: 28)
-
-            VStack(alignment: .leading, spacing: 4) {
-              Text(
-                appState.screenTime.shieldedAppCount == 0
-                  ? "No apps selected yet"
-                  : "\(appState.screenTime.shieldedAppCount) apps selected"
-              )
-              .font(.system(size: 17, weight: .bold, design: .rounded))
+            Text("Privacy Policy")
+              .font(.system(size: 16, weight: .bold, design: .rounded))
               .foregroundStyle(UnrotTheme.text)
-
-              Text(
-                appState.screenTime.isAuthorized
-                  ? "These lock when your scroll bank hits zero."
-                  : "Allow Screen Time to pick apps to block."
-              )
-              .font(.system(size: 14))
-              .foregroundStyle(UnrotTheme.textMuted)
-              .multilineTextAlignment(.leading)
-            }
-
-            Spacer(minLength: 4)
-
+            Spacer()
             Image(systemName: "chevron.right")
               .font(.system(size: 14, weight: .bold))
               .foregroundStyle(UnrotTheme.textMuted)
           }
           .padding(16)
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .background(UnrotTheme.surface)
-          .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-          .themeCardShadow()
         }
         .buttonStyle(.plain)
       }
-      .padding(16)
       .frame(maxWidth: .infinity, alignment: .leading)
       .background(UnrotTheme.card)
       .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))

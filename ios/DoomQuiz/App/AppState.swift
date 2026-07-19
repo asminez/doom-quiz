@@ -22,6 +22,11 @@ final class AppState: ObservableObject {
     showOnboarding = !PersistenceStore.hasCompletedOnboarding
     screenTime.refreshAuthorization()
     syncShields()
+
+    Analytics.capture("app_opened", ["is_new_user": showOnboarding])
+    if showOnboarding {
+      Analytics.capture("onboarding_started")
+    }
   }
 
   var activeDeck: StudyDeck? {
@@ -54,9 +59,12 @@ final class AppState: ObservableObject {
   func completeOnboarding() {
     PersistenceStore.hasCompletedOnboarding = true
     showOnboarding = false
+    Analytics.capture("onboarding_completed")
   }
 
   func clearAllHistory() {
+    Analytics.capture("history_cleared")
+    Analytics.reset()
     PersistenceStore.clearAllHistory()
     snapshot = PersistenceStore.defaultSnapshot()
     showOnboarding = true
@@ -94,6 +102,7 @@ final class AppState: ObservableObject {
   }
 
   func setDailyBudget(_ minutes: Int) {
+    Analytics.capture("scroll_limit_changed", ["minutes": minutes])
     snapshot.dailyBudgetMinutes = minutes
     snapshot.remainingMinutes = minutes
     snapshot.usedTodayMinutes = 0
@@ -130,6 +139,12 @@ final class AppState: ObservableObject {
     paragraphs.append(paragraph)
     paragraphs.sort { $0.id.localizedStandardCompare($1.id) == .orderedAscending }
     snapshot.decks[index].paragraphs = paragraphs
+    persist()
+  }
+
+  func setDeckTopicEmoji(deckId: String, emoji: String?) {
+    guard let index = snapshot.decks.firstIndex(where: { $0.id == deckId }) else { return }
+    snapshot.decks[index].topicEmoji = emoji
     persist()
   }
 
@@ -205,9 +220,12 @@ final class AppState: ObservableObject {
         material: material,
         source: deck.source,
         wordsPerSection: wordsPerSection
-      ) { [weak self] index, paragraph, questions in
+      ) { [weak self] index, paragraph, questions, topicEmoji in
         guard let self else { return }
         self.setLessonParagraph(deckId: deck.id, paragraph: paragraph)
+        if index == 0, let topicEmoji {
+          self.setDeckTopicEmoji(deckId: deck.id, emoji: topicEmoji)
+        }
         if !questions.isEmpty {
           self.appendSectionQuestions(questions, for: paragraph.id, deckId: deck.id)
         }
@@ -233,6 +251,7 @@ final class AppState: ObservableObject {
   }
 
   func generateDeck(title: String, content: String, source: String, wordsPerSection: Int = LessonContentAmount.default.wordsPerSection) async {
+    Analytics.capture("lesson_generation_started", ["source": source])
     prepareLessonUI()
     let deckId = "deck-\(Int(Date().timeIntervalSince1970))"
     let storedExcerpt = source == "syllabus" ? PDFTextExtractor.clipForModel(content) : nil
@@ -256,22 +275,30 @@ final class AppState: ObservableObject {
         material: material,
         source: source,
         wordsPerSection: wordsPerSection
-      ) { [weak self] index, paragraph, questions in
+      ) { [weak self] index, paragraph, questions, topicEmoji in
         guard let self else { return }
         self.setLessonParagraph(deckId: deckId, paragraph: paragraph)
+        if index == 0, let topicEmoji {
+          self.setDeckTopicEmoji(deckId: deckId, emoji: topicEmoji)
+        }
         if !questions.isEmpty {
           self.appendSectionQuestions(questions, for: paragraph.id, deckId: deckId)
         }
-        if index == 0 { self.isGenerating = false }
+        if index == 0 {
+          self.isGenerating = false
+          Analytics.capture("lesson_first_section_ready", ["source": source])
+        }
       }
       updateActiveDeckParagraphs(paragraphs)
       isGenerating = false
       isLoadingLessonSections = false
+      Analytics.capture("lesson_generation_completed", ["source": source, "sections": paragraphs.count])
       await backfillMissingSectionQuizzes(deckId: deckId, material: material)
     } catch {
       isGenerating = false
       isLoadingLessonSections = false
       lastError = error.localizedDescription
+      Analytics.capture("lesson_generation_failed", ["source": source])
     }
   }
 
@@ -283,12 +310,14 @@ final class AppState: ObservableObject {
     }
     activeSectionParagraphId = nil
     showGateQuiz = true
+    Analytics.capture("quiz_opened", ["type": "gate"])
   }
 
   func openSectionQuiz(paragraphId: String) {
     guard activeDeck != nil else { return }
     activeSectionParagraphId = paragraphId
     showGateQuiz = true
+    Analytics.capture("quiz_opened", ["type": "section"])
   }
 
   func closeQuiz(openStudyTab: Bool = false) {
@@ -298,6 +327,12 @@ final class AppState: ObservableObject {
   }
 
   func applyQuizReward(correct: Int, total: Int) -> Int {
+    Analytics.capture("quiz_completed", [
+      "type": "gate",
+      "correct": correct,
+      "total": total,
+      "passed": total > 0 && correct == total,
+    ])
     let tierMinutes = RewardCalculator.minutes(forCorrect: correct, total: total)
     let delta = max(0, tierMinutes - snapshot.gateRewardClaimedMinutes)
     if tierMinutes > snapshot.gateRewardClaimedMinutes { snapshot.gateRewardClaimedMinutes = tierMinutes }
@@ -316,7 +351,16 @@ final class AppState: ObservableObject {
     }
     let perfect = correct == total && total >= RewardCalculator.sectionQuestionCount
     let wasMastered = deck.masteredParagraphIds.contains(paragraphId)
-    if perfect { markParagraphMastered(paragraphId) }
+    Analytics.capture("quiz_completed", [
+      "type": "section",
+      "correct": correct,
+      "total": total,
+      "passed": perfect,
+    ])
+    if perfect {
+      markParagraphMastered(paragraphId)
+      if !wasMastered { Analytics.capture("section_mastered") }
+    }
     var delta = 0
     if perfect, !snapshot.gateRewardClaimedSectionIds.contains(paragraphId) {
       delta = RewardCalculator.sectionPerfectMinutes
@@ -358,6 +402,7 @@ final class AppState: ObservableObject {
   func updateScreenTimeSelection(_ selection: FamilyActivitySelection) {
     screenTime.updateSelection(selection)
     syncShields()
+    Analytics.capture("blocked_apps_updated", ["count": screenTime.shieldedAppCount])
   }
 
   private func syncShields() {

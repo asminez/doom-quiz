@@ -72,11 +72,13 @@ enum AIService {
     """
     Output ONLY one JSON object. No markdown, no commentary.
     {
+      "topicEmoji":"single emoji that fits the lesson topic",
       "paragraphs":[
         {"label":"string","body":"string","questions":[{"prompt":"string","choices":["A","B","C","D"],"correctIndex":0}]}
       ]
     }
     Rules:
+    - topicEmoji must be exactly one emoji character (e.g. ⚔️ for Vikings, 🐍 for Python, 🇪🇸 for Spanish).
     - Return exactly 7 sections (sections 2 through 8 only).
     - Follow the provided section plan exactly in order.
     - Do not regenerate section 1.
@@ -129,7 +131,7 @@ enum AIService {
       material: material,
       source: source,
       wordsPerSection: LessonContentAmount.default.wordsPerSection
-    ) { _, _, questions in
+    ) { _, _, questions, _ in
       allQuestions.append(contentsOf: questions)
     }
     return StudyDeck(
@@ -145,14 +147,14 @@ enum AIService {
 
   /// Two API calls, each section bundled with its quiz:
   /// - Call 1: 8 topic outline + section 1 reading + section 1 quiz
-  /// - Call 2: sections 2–8, each with its own quiz
+  /// - Call 2: topic emoji + sections 2–8, each with its own quiz
   static func generateLessonParagraphsProgressive(
     deckId: String,
     title: String,
     material: String,
     source: String = "topic",
     wordsPerSection: Int = LessonContentAmount.default.wordsPerSection,
-    onSection: @MainActor @escaping (Int, StudyParagraph, [QuizQuestion]) -> Void
+    onSection: @MainActor @escaping (Int, StudyParagraph, [QuizQuestion], String?) -> Void
   ) async throws -> [StudyParagraph] {
     let first = try await fetchLessonPlanAndFirstSection(
       title: title,
@@ -173,7 +175,7 @@ enum AIService {
       deckTitle: title
     )
     var paragraphs: [StudyParagraph] = [firstParagraph]
-    await onSection(0, firstParagraph, firstQuestions)
+    await onSection(0, firstParagraph, firstQuestions, nil)
 
     let tail = try await fetchRemainingSections(
       material: material,
@@ -183,7 +185,11 @@ enum AIService {
       wordsPerSection: wordsPerSection
     )
 
-    for (offset, section) in tail.enumerated() {
+    if let topicEmoji = tail.topicEmoji {
+      await onSection(0, firstParagraph, [], topicEmoji)
+    }
+
+    for (offset, section) in tail.sections.enumerated() {
       let index = offset + 1
       let paragraph = StudyParagraph(
         id: "\(deckId)-para\(index)",
@@ -198,7 +204,7 @@ enum AIService {
         deckTitle: title
       )
       paragraphs.append(paragraph)
-      await onSection(index, paragraph, questions)
+      await onSection(index, paragraph, questions, nil)
     }
 
     guard paragraphs.count >= 6 else {
@@ -222,7 +228,7 @@ enum AIService {
       material: material,
       source: source,
       wordsPerSection: wordsPerSection,
-      onSection: { _, _, _ in }
+      onSection: { _, _, _, _ in }
     )
 
     return StudyDeck(
@@ -295,7 +301,7 @@ enum AIService {
       material: material,
       source: source,
       wordsPerSection: wordsPerSection,
-      onSection: { _, _, _ in }
+      onSection: { _, _, _, _ in }
     )
   }
 
@@ -456,11 +462,14 @@ enum AIService {
     sectionPlans: [String],
     firstSection: (label: String, body: String),
     wordsPerSection: Int
-  ) async throws -> [(
-    label: String,
-    body: String,
-    questions: [(prompt: String, choices: [String], correctIndex: Int)]
-  )] {
+  ) async throws -> (
+    topicEmoji: String?,
+    sections: [(
+      label: String,
+      body: String,
+      questions: [(prompt: String, choices: [String], correctIndex: Int)]
+    )]
+  ) {
     var lastError: Error?
     for _ in 0..<2 {
       do {
@@ -482,7 +491,7 @@ enum AIService {
           maxTokens: lessonWithQuizzesMaxTokens(for: wordsPerSection, sectionCount: 7)
         )
         let parsed = try parseRemainingSections(from: raw)
-        if parsed.count >= 5 {
+        if parsed.sections.count >= 5 {
           return parsed
         }
       } catch {
@@ -518,11 +527,25 @@ enum AIService {
     return (sectionPlans, (firstLabel, firstBody, firstQuestions))
   }
 
-  private static func parseRemainingSections(from raw: String) throws -> [(
-    label: String,
-    body: String,
-    questions: [(prompt: String, choices: [String], correctIndex: Int)]
-  )] {
+  /// Keep a single emoji grapheme; strip anything else the model might add.
+  private static func sanitizeTopicEmoji(_ raw: String?) -> String? {
+    guard let raw = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
+          let first = raw.first else { return nil }
+    let emoji = String(first)
+    let isEmoji = emoji.unicodeScalars.contains {
+      $0.properties.isEmojiPresentation || $0.properties.isEmoji
+    }
+    return isEmoji ? emoji : nil
+  }
+
+  private static func parseRemainingSections(from raw: String) throws -> (
+    topicEmoji: String?,
+    sections: [(
+      label: String,
+      body: String,
+      questions: [(prompt: String, choices: [String], correctIndex: Int)]
+    )]
+  ) {
     let jsonText = sanitizeJSON(extractJSONString(from: raw))
     guard let data = jsonText.data(using: .utf8),
       let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any]
@@ -537,7 +560,8 @@ enum AIService {
       return (label, body, parseQuestionsFromObject(item))
     }
     guard !paragraphs.isEmpty else { throw AIServiceError.server("No remaining sections in AI response.") }
-    return paragraphs
+    let topicEmoji = sanitizeTopicEmoji(root["topicEmoji"] as? String)
+    return (topicEmoji, paragraphs)
   }
 
   private static func parseQuestionsFromObject(_ object: [String: Any]) -> [(prompt: String, choices: [String], correctIndex: Int)] {
@@ -594,7 +618,7 @@ enum AIService {
     }
 
     choices = choices.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }.filter { !$0.isEmpty }
-    while choices.count < 4 { choices.append("—") }
+    while choices.count < 4 { choices.append("None of the above") }
 
     var correctIndex = 0
     if let idx = item["correctIndex"] as? Int { correctIndex = idx }

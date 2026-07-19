@@ -91,20 +91,10 @@ struct StudyLessonProgressView: View {
 
   private func paragraphCard(_ paragraph: StudyParagraph) -> some View {
     VStack(alignment: .leading, spacing: 12) {
-      HStack(spacing: 8) {
-        Image(systemName: "text.alignleft")
-          .font(.caption.weight(.bold))
-          .foregroundStyle(QuizletTheme.primary)
-        Text(shortLabel(paragraph.label))
-          .font(.system(size: 13, weight: .heavy, design: .rounded))
-          .foregroundStyle(QuizletTheme.primary)
-          .lineLimit(2)
-      }
-
       Text(paragraph.body)
-        .font(.system(size: 16, weight: .regular, design: .rounded))
+        .font(.system(size: 18, weight: .regular, design: .rounded))
         .foregroundStyle(QuizletTheme.text)
-        .lineSpacing(6)
+        .lineSpacing(7)
         .fixedSize(horizontal: false, vertical: true)
     }
     .padding(18)

@@ -45,7 +45,7 @@ enum RewardCalculator {
 
   static func sectionLabel(forCorrect correct: Int, total: Int = sectionQuestionCount) -> String {
     if correct == total && total >= sectionQuestionCount {
-      return "Perfect! Section mastered — +\(sectionPerfectMinutes)m unlocked."
+      return "Perfect! Section mastered! +\(sectionPerfectMinutes)m unlocked."
     }
     return "Need \(sectionQuestionCount)/\(sectionQuestionCount) to unlock the next section."
   }
@@ -61,6 +61,6 @@ enum RewardCalculator {
     if delta > 0 {
       return "+\(delta)m deposited"
     }
-    return "No new time — beat your best score to earn more."
+    return "No new time. Beat your best score to earn more."
   }
 }

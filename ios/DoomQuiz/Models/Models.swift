@@ -51,6 +51,7 @@ struct StudyDeck: Identifiable, Codable, Hashable {
   let id: String
   var title: String
   var source: String
+  var topicEmoji: String?
   var paragraphs: [StudyParagraph]
   var reviewSummary: String?
   var points: [MemorizePoint]
@@ -89,7 +90,7 @@ struct StudyDeck: Identifiable, Codable, Hashable {
   }
 
   enum CodingKeys: String, CodingKey {
-    case id, title, source, paragraphs, reviewSummary, points, questions
+    case id, title, source, topicEmoji, paragraphs, reviewSummary, points, questions
     case masteredParagraphIds, createdAt
   }
 
@@ -97,6 +98,7 @@ struct StudyDeck: Identifiable, Codable, Hashable {
     id: String,
     title: String,
     source: String,
+    topicEmoji: String? = nil,
     paragraphs: [StudyParagraph] = [],
     reviewSummary: String? = nil,
     points: [MemorizePoint] = [],
@@ -107,6 +109,7 @@ struct StudyDeck: Identifiable, Codable, Hashable {
     self.id = id
     self.title = title
     self.source = source
+    self.topicEmoji = topicEmoji
     self.paragraphs = paragraphs
     self.reviewSummary = reviewSummary
     self.points = points
@@ -120,6 +123,7 @@ struct StudyDeck: Identifiable, Codable, Hashable {
     id = try c.decode(String.self, forKey: .id)
     title = try c.decode(String.self, forKey: .title)
     source = try c.decode(String.self, forKey: .source)
+    topicEmoji = try c.decodeIfPresent(String.self, forKey: .topicEmoji)
     paragraphs = try c.decodeIfPresent([StudyParagraph].self, forKey: .paragraphs) ?? []
     reviewSummary = try c.decodeIfPresent(String.self, forKey: .reviewSummary)
     points = try c.decodeIfPresent([MemorizePoint].self, forKey: .points) ?? []

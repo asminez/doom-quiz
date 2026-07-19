@@ -3,8 +3,7 @@ import SwiftUI
 enum AppTab: Int {
   case focus = 0
   case study = 1
-  case stats = 2
-  case settings = 3
+  case settings = 2
 }
 
 struct MainTabView: View {
@@ -26,10 +25,6 @@ struct MainTabView: View {
           StudyView(selectedTab: $selectedTab)
             .tabItem { Label("Study", systemImage: "book.fill") }
             .tag(AppTab.study.rawValue)
-
-          StatsView()
-            .tabItem { Label("Stats", systemImage: "chart.line.uptrend.xyaxis") }
-            .tag(AppTab.stats.rawValue)
 
           SettingsView()
             .tabItem { Label("Settings", systemImage: "gearshape.fill") }

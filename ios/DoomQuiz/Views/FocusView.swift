@@ -86,7 +86,7 @@ struct FocusView: View {
     VStack(alignment: .center, spacing: 0) {
       ZStack {
         Circle()
-          .strokeBorder(ringColor.opacity(0.9), lineWidth: 4.4)
+          .strokeBorder(ringColor.opacity(0.9), lineWidth: 6.5)
           .frame(width: 58, height: 58)
         Image(systemName: icon)
           .font(.system(size: 14, weight: .bold))
@@ -231,9 +231,7 @@ struct FocusView: View {
           RoundedRectangle(cornerRadius: 13, style: .continuous)
             .fill(QuizletTheme.primarySoft)
             .frame(width: 39, height: 39)
-          Image(systemName: deck == nil ? "plus" : "book.fill")
-            .font(.system(size: 17, weight: .semibold))
-            .foregroundStyle(QuizletTheme.primary)
+          DeckTopicIcon(deck: deck, symbolSize: 17, emojiSize: 22)
         }
 
         VStack(alignment: .leading, spacing: 4) {
