@@ -282,9 +282,12 @@ struct OnboardingJailAnimation: View {
     .init(id: "sc", asset: "snapchat_logo_clean", start: CGSize(width: 0, height: -125), cell: CGSize(width: 0, height: 2), size: 46),
   ]
 
+  private static let cellSize = CGSize(width: 260, height: 200)
+  private static let cellCorner: CGFloat = 20
+
   @State private var imprisoned = false
-  @State private var barsVisible = false
-  @State private var locked = false
+  @State private var barsDropped = false
+  @State private var slamImpact = false
 
   var body: some View {
     VStack(spacing: 28) {
@@ -294,10 +297,10 @@ struct OnboardingJailAnimation: View {
       )
 
       ZStack {
-        RoundedRectangle(cornerRadius: 20, style: .continuous)
+        RoundedRectangle(cornerRadius: Self.cellCorner, style: .continuous)
           .fill(UnrotTheme.cardBorder.opacity(0.18))
           .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
+            RoundedRectangle(cornerRadius: Self.cellCorner, style: .continuous)
               .stroke(UnrotTheme.cardBorder.opacity(0.5), lineWidth: 1.5)
           )
 
@@ -311,24 +314,13 @@ struct OnboardingJailAnimation: View {
             .rotationEffect(.degrees(imprisoned ? 0 : app.start.width > 0 ? 12 : -10))
         }
 
+        // The gate slides down into the opening, so it is clipped to the cell.
         JailBarsOverlay()
-          .opacity(barsVisible ? 1 : 0)
-          .scaleEffect(barsVisible ? 1 : 1.05)
-
-        ZStack {
-          Circle()
-            .fill(UnrotTheme.card)
-            .frame(width: 58, height: 58)
-            .overlay(Circle().stroke(UnrotTheme.danger.opacity(0.35), lineWidth: 2))
-            .themeCardShadow()
-          Image(systemName: "lock.fill")
-            .font(.system(size: 26, weight: .bold))
-            .foregroundStyle(UnrotTheme.danger)
-        }
-        .scaleEffect(locked ? 1 : 0.6)
-        .opacity(locked ? 1 : 0)
+          .offset(y: barsDropped ? 0 : -(Self.cellSize.height + 30))
+          .clipShape(RoundedRectangle(cornerRadius: Self.cellCorner, style: .continuous))
       }
-      .frame(width: 260, height: 200)
+      .frame(width: Self.cellSize.width, height: Self.cellSize.height)
+      .scaleEffect(x: slamImpact ? 1.015 : 1, y: slamImpact ? 0.985 : 1, anchor: .bottom)
 
       Spacer(minLength: 0)
     }
@@ -339,8 +331,8 @@ struct OnboardingJailAnimation: View {
 
   private func runSequence() {
     imprisoned = false
-    barsVisible = false
-    locked = false
+    barsDropped = false
+    slamImpact = false
 
     DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
       withAnimation(.spring(response: 0.85, dampingFraction: 0.78)) {
@@ -349,14 +341,16 @@ struct OnboardingJailAnimation: View {
     }
 
     DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-      withAnimation(.easeOut(duration: 0.35)) {
-        barsVisible = true
+      withAnimation(.interpolatingSpring(stiffness: 220, damping: 16)) {
+        barsDropped = true
       }
     }
 
-    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-      withAnimation(.spring(response: 0.45, dampingFraction: 0.72)) {
-        locked = true
+    // Squash on the frame the moment the gate lands, then settle.
+    DispatchQueue.main.asyncAfter(deadline: .now() + 1.78) {
+      withAnimation(.easeOut(duration: 0.07)) { slamImpact = true }
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.07) {
+        withAnimation(.spring(response: 0.35, dampingFraction: 0.55)) { slamImpact = false }
       }
     }
 
@@ -367,50 +361,72 @@ struct OnboardingJailAnimation: View {
 }
 
 private struct JailBarsOverlay: View {
-  private let barCount = 7
+  private let barCount = 8
+  private let barWidth: CGFloat = 8
+  private let railHeight: CGFloat = 12
+  private let inset: CGFloat = 16
 
-  private var barGradient: LinearGradient {
-    LinearGradient(
-      colors: [
-        UnrotTheme.textMuted.opacity(0.55),
-        UnrotTheme.text.opacity(0.95),
-        UnrotTheme.textMuted.opacity(0.55),
-      ],
-      startPoint: .leading,
-      endPoint: .trailing
-    )
+  /// Stops that read as a rounded steel rod: dark at both edges with a bright
+  /// specular stripe just off-centre.
+  private var steelStops: [Gradient.Stop] {
+    [
+      .init(color: UnrotTheme.text.opacity(0.55), location: 0.0),
+      .init(color: UnrotTheme.text.opacity(0.95), location: 0.2),
+      .init(color: Color.white.opacity(0.75), location: 0.36),
+      .init(color: UnrotTheme.text.opacity(0.95), location: 0.6),
+      .init(color: UnrotTheme.text.opacity(0.5), location: 1.0),
+    ]
+  }
+
+  private var steelAcross: LinearGradient {
+    LinearGradient(stops: steelStops, startPoint: .leading, endPoint: .trailing)
+  }
+
+  private var steelDown: LinearGradient {
+    LinearGradient(stops: steelStops, startPoint: .top, endPoint: .bottom)
   }
 
   var body: some View {
     GeometryReader { geo in
       let w = geo.size.width
       let h = geo.size.height
-      let inset: CGFloat = 14
       let usableWidth = w - inset * 2
       let gap = usableWidth / CGFloat(barCount - 1)
-      let barWidth: CGFloat = 7
-      let railHeight: CGFloat = 9
+      let topRailY = h * 0.15
+      let bottomRailY = h * 0.85
+      let barXs = (0..<barCount).map { inset + gap * CGFloat($0) }
 
       ZStack {
-        // Vertical bars
-        ForEach(0..<barCount, id: \.self) { i in
-          Capsule(style: .continuous)
-            .fill(barGradient)
+        ForEach(Array(barXs.enumerated()), id: \.offset) { _, x in
+          RoundedRectangle(cornerRadius: barWidth / 3, style: .continuous)
+            .fill(steelAcross)
             .frame(width: barWidth, height: h - inset)
-            .position(x: inset + gap * CGFloat(i), y: h / 2)
+            .shadow(color: .black.opacity(0.35), radius: 4, x: 2, y: 1)
+            .position(x: x, y: h / 2)
         }
 
-        // Horizontal cross rails (top, middle, bottom)
-        ForEach([0.16, 0.5, 0.84], id: \.self) { fraction in
-          Capsule(style: .continuous)
-            .fill(barGradient)
+        ForEach([topRailY, bottomRailY], id: \.self) { y in
+          RoundedRectangle(cornerRadius: railHeight / 3, style: .continuous)
+            .fill(steelDown)
             .frame(width: usableWidth + barWidth, height: railHeight)
-            .position(x: w / 2, y: h * fraction)
+            .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
+            .position(x: w / 2, y: y)
         }
 
-        // Outer cell-door frame
+        // Rivets where every bar meets a rail.
+        ForEach(Array(barXs.enumerated()), id: \.offset) { _, x in
+          ForEach([topRailY, bottomRailY], id: \.self) { y in
+            Circle()
+              .fill(UnrotTheme.bg.opacity(0.55))
+              .overlay(Circle().stroke(Color.white.opacity(0.3), lineWidth: 0.5))
+              .frame(width: 3.5, height: 3.5)
+              .position(x: x, y: y)
+          }
+        }
+
         RoundedRectangle(cornerRadius: 14, style: .continuous)
-          .stroke(UnrotTheme.text.opacity(0.9), lineWidth: 5)
+          .strokeBorder(steelAcross, lineWidth: 6)
+          .shadow(color: .black.opacity(0.3), radius: 5, x: 0, y: 2)
           .padding(inset / 2)
       }
     }
